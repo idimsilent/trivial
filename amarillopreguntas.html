@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2 id="pregunta">Cargando...</h2>
+        <div id="opciones" class="opciones-container"></div>
+        <button onclick="location.href='index.html'" style="margin-top:20px; background:#95a5a6; color:white;">Volver</button>
+    </div>
+    <script>
+        const misPreguntas = [
+            { p: "¿Cuántos jugadores tiene un equipo de fútbol?", r: ["11", "10", "12"] },
+            { p: "¿Cada cuántos años hay Juegos Olímpicos?", r: ["4 años", "2 años", "5 años"] }
+        ];
+        const azar = misPreguntas[Math.floor(Math.random() * misPreguntas.length)];
+        document.getElementById('pregunta').innerText = azar.p;
+        azar.r.forEach(res => {
+            const b = document.createElement('button');
+            b.innerText = res; b.className = "btn-amarillo";
+            b.onclick = () => alert("Respuesta: " + res);
+            document.getElementById('opciones').appendChild(b);
+        });
+    </script>
+</body>
+</html>
