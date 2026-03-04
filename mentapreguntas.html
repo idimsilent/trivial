@@ -29,7 +29,7 @@
         const db = getDatabase(app);
 
         // 1. CAMBIA AQUÍ EL COLOR: 'preguntas/rojo', 'preguntas/verde', etc.
-        get(ref(db, 'preguntas/verde')).then((snapshot) => {
+        get(ref(db, 'preguntas/menta')).then((snapshot) => {
             let preguntas = [];
             if (snapshot.exists()) {
                 preguntas = Object.values(snapshot.val());
@@ -43,7 +43,7 @@
                 const b = document.createElement('button');
                 b.innerText = res; 
                 // 2. CAMBIA AQUÍ LA CLASE: 'btn-rojo', 'btn-verde', etc.
-                b.className = "btn-verde"; 
+                b.className = "btn-menta"; 
                 b.onclick = () => alert("Elegiste: " + res);
                 document.getElementById('opts').appendChild(b);
             });
