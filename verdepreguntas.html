@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=1.5">
+    <link rel="stylesheet" href="estilos.css?v=1.6">
 </head>
 <body>
     <div class="container">
-        <h2 id="txtP">Conectando con la nube...</h2>
-        <div id="opts" class="opciones-container"></div>
-        <button class="btn-volver" onclick="location.href='menu.html'">Volver al Menú</button>
+        <h2 id="txtP">Conectando...</h2>
+        <div id="contenido" class="opciones-container"></div>
+        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px;"></div>
+        <button class="btn-volver" onclick="location.href='menu.html'">Volver</button>
     </div>
 
     <script type="module">
@@ -29,27 +30,46 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 1. CAMBIA AQUÍ EL COLOR: 'preguntas/rojo', 'preguntas/verde', etc.
-        get(ref(db, 'preguntas/verde')).then((snapshot) => {
-            let preguntas = [];
-            if (snapshot.exists()) {
-                preguntas = Object.values(snapshot.val());
-            } else {
-                preguntas = [{p: "No hay preguntas. Claudia debe añadirlas.", r: ["OK"]}];
-            }
+        // --- CAMBIA EL COLOR AQUÍ: 'rojo', 'verde', etc. ---
+        const colorCale = 'verde'; 
+        const claseBtn = 'btn-verde';
 
-            const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
-            document.getElementById('txtP').innerText = azar.p;
-            azar.r.forEach(res => {
-                const b = document.createElement('button');
-                b.innerText = res; 
-                // 2. CAMBIA AQUÍ LA CLASE: 'btn-rojo', 'btn-verde', etc.
-                b.className = "btn-verde"; 
-                b.onclick = () => alert("Elegiste: " + res);
-                document.getElementById('opts').appendChild(b);
-            });
+        get(ref(db, 'preguntas/' + colorCale)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const preguntas = Object.values(snapshot.val());
+                const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
+                
+                document.getElementById('txtP').innerText = azar.p;
+                const cont = document.getElementById('contenido');
+
+                if(azar.tipo === 'test') {
+                    azar.r.forEach(res => {
+                        const b = document.createElement('button');
+                        b.innerText = res; b.className = claseBtn;
+                        b.onclick = () => {
+                            if(res === azar.correcta) {
+                                document.getElementById('feedback').innerText = "✅ ¡CORRECTO!";
+                                document.getElementById('feedback').style.color = "green";
+                            } else {
+                                document.getElementById('feedback').innerText = "❌ FALLASTE. Era: " + azar.correcta;
+                                document.getElementById('feedback').style.color = "red";
+                            }
+                        };
+                        cont.appendChild(b);
+                    });
+                } else {
+                    // TIPO DEFINICIÓN
+                    const pDef = document.createElement('p');
+                    pDef.innerText = azar.definicion;
+                    pDef.style.background = "#f0f0f0";
+                    pDef.style.padding = "15px";
+                    pDef.style.borderRadius = "10px";
+                    cont.appendChild(pDef);
+                }
+            } else {
+                document.getElementById('txtP').innerText = "Sin preguntas aún.";
+            }
         });
     </script>
 </body>
 </html>
-
