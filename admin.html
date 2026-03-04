@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css?v=1.4">
-    <title>Panel Claudia</title>
+    <link rel="stylesheet" href="estilos.css?v=1.5">
+    <title>Panel Claudia - Firebase</title>
 </head>
 <body>
     <div class="container">
-        <h1>Panel Admin 👑</h1>
+        <h1>Panel Admin Nube ☁️</h1>
         <select id="colorSel">
             <option value="rojo">Rojo (Geografía)</option>
             <option value="verde">Verde (Arte)</option>
@@ -17,28 +17,41 @@
         </select>
         <input type="text" id="pregunta" placeholder="Pregunta">
         <input type="text" id="respuestas" placeholder="Respuestas (separadas por comas)">
-        <button class="btn-verde" onclick="guardar()">Añadir Pregunta</button>
-        <button class="btn-rojo" onclick="borrar()" style="margin-top:20px;">Borrar todo este color</button>
+        <button class="btn-verde" id="btnGuardar">Añadir a la Nube</button>
         <button class="btn-volver" onclick="location.href='index.html'">Cerrar Sesión</button>
     </div>
-    <script>
-        function guardar() {
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4",
+            authDomain: "trivial-clase.firebaseapp.com",
+            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "trivial-clase",
+            storageBucket: "trivial-clase.firebasestorage.app",
+            messagingSenderId: "692832052784",
+            appId: "1:692832052784:web:72f9568beaf847a706aff5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('btnGuardar').onclick = function() {
             const color = document.getElementById('colorSel').value;
             const p = document.getElementById('pregunta').value;
-            const r = document.getElementById('respuestas').value.split(',').map(item => item.trim());
-            if(!p || r.length < 1) return alert("Rellena los campos");
-            let data = JSON.parse(localStorage.getItem('preguntas_' + color)) || [];
-            data.push({ p: p, r: r });
-            localStorage.setItem('preguntas_' + color, JSON.stringify(data));
-            alert("¡Pregunta guardada en categoría " + color + "!");
-            document.getElementById('pregunta').value = "";
-            document.getElementById('respuestas').value = "";
-        }
-        function borrar() {
-            const color = document.getElementById('colorSel').value;
-            localStorage.removeItem('preguntas_' + color);
-            alert("Memoria de " + color + " borrada.");
-        }
+            const r = document.getElementById('respuestas').value.split(',').map(i => i.trim());
+            
+            if(!p || r.length < 1) return alert("Rellena todo");
+
+            push(ref(db, 'preguntas/' + color), { p, r })
+            .then(() => {
+                alert("¡Guardado en la nube!");
+                document.getElementById('pregunta').value = "";
+                document.getElementById('respuestas').value = "";
+            }).catch(e => alert("Error: Activa el 'Modo de prueba' en Firebase Realtime Database"));
+        };
     </script>
 </body>
 </html>
