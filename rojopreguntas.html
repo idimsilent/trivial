@@ -2,30 +2,24 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css?v=1.3">
 </head>
 <body>
     <div class="container">
         <h2 id="pregunta">Cargando...</h2>
         <div id="opciones" class="opciones-container"></div>
-        <button onclick="location.href='index.html'" style="margin-top:20px; background:#95a5a6; color:white;">Volver</button>
+        <button class="btn-volver" onclick="location.href='menu.html'">Volver al Menú</button>
     </div>
-
     <script>
-        // AQUÍ DEFINES TUS PREGUNTAS PARA ESTE COLOR
         const misPreguntas = [
-            { p: "¿Capital de Francia?", r: ["París", "Berlín", "Roma"] },
-            { p: "¿Río más largo?", r: ["Amazonas", "Nilo", "Ebro"] }
+            { p: "¿Cuál es el río más largo?", r: ["Amazonas", "Nilo", "Ebro"] },
+            { p: "¿Capital de Francia?", r: ["París", "Berlín", "Roma"] }
         ];
-
         const azar = misPreguntas[Math.floor(Math.random() * misPreguntas.length)];
         document.getElementById('pregunta').innerText = azar.p;
-        
         azar.r.forEach(res => {
             const b = document.createElement('button');
-            b.innerText = res;
-            b.className = "btn-rojo"; // Usa la clase del color que toque
+            b.innerText = res; b.className = "btn-rojo"; // Cambia esto según el archivo
             b.onclick = () => alert("Elegiste: " + res);
             document.getElementById('opciones').appendChild(b);
         });
