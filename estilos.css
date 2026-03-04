@@ -1,0 +1,45 @@
+font-family: 'Open Sans', sans-serif;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+margin: 0;
+background-color: #f0faff;
+
+.container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 550px;
+}
+
+h1, h2 { font-family: 'Fredoka One', cursive; color: #2c3e50; }
+
+.btn-cat-container, .opciones-container {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+button {
+    padding: 18px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+/* Colores específicos */
+.btn-rojo { background-color: #FF6B6B; color: white; }
+.btn-verde { background-color: #4ECDC4; color: white; }
+.btn-amarillo { background-color: #FFD93D; color: #333; }
+.btn-morado { background-color: #6C5CE7; color: white; }
+.btn-menta { background-color: #A8E6CF; color: #333; }
+
+button:hover { opacity: 0.9; transform: scale(1.02); }
