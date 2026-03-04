@@ -2,19 +2,34 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="estilos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <title>Login - Trivial</title>
 </head>
 <body>
     <div class="container">
-        <h1>¡Trivial de Clase!</h1>
-        <div class="btn-cat-container">
-            <button class="btn-rojo" onclick="location.href='rojopreguntas.html'">🔴 Geografía</button>
-            <button class="btn-verde" onclick="location.href='verdepreguntas.html'">🟢 Arte</button>
-            <button class="btn-amarillo" onclick="location.href='amarillopreguntas.html'">🟡 Deportes</button>
-            <button class="btn-morado" onclick="location.href='moradopreguntas.html'">🟣 Ciencia</button>
-            <button class="btn-menta" onclick="location.href='mentapreguntas.html'">🟢 Entretenimiento</button>
+        <h1>Bienvenido al Trivial</h1>
+        <div class="opciones-container">
+            <input type="text" id="user" placeholder="Usuario" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+            <input type="password" id="pass" placeholder="Contraseña" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+            <button class="btn-morado" onclick="login()">Entrar</button>
         </div>
+        <p id="error" style="color:red; display:none; margin-top:10px;">Datos incorrectos</p>
     </div>
+
+    <script>
+        function login() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+
+            if (u === "claudia" && p === "jorgemiamog") {
+                location.href = "admin.html"; // Panel de control
+            } else if (u === "alumno" && p === "12345") {
+                location.href = "menu.html"; // El menú de botones que tenías antes
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
