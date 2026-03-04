@@ -42,15 +42,14 @@
             const color = document.getElementById('colorSel').value;
             const p = document.getElementById('pregunta').value;
             const r = document.getElementById('respuestas').value.split(',').map(i => i.trim());
-            
             if(!p || r.length < 1) return alert("Rellena todo");
 
             push(ref(db, 'preguntas/' + color), { p, r })
             .then(() => {
-                alert("¡Guardado en la nube!");
+                alert("¡Guardado en Firebase!");
                 document.getElementById('pregunta').value = "";
                 document.getElementById('respuestas').value = "";
-            }).catch(e => alert("Error: Activa el 'Modo de prueba' en Firebase Realtime Database"));
+            });
         };
     </script>
 </body>
