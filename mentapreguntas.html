@@ -2,27 +2,51 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css?v=1.5">
 </head>
 <body>
     <div class="container">
-        <h2 id="pregunta">Cargando...</h2>
-        <div id="opciones" class="opciones-container"></div>
-        <button onclick="location.href='index.html'" style="margin-top:20px; background:#95a5a6; color:white;">Volver</button>
+        <h2 id="txtP">Conectando con la nube...</h2>
+        <div id="opts" class="opciones-container"></div>
+        <button class="btn-volver" onclick="location.href='menu.html'">Volver al Menú</button>
     </div>
-    <script>
-        const misPreguntas = [
-            { p: "¿Cómo se llama el ratón de Disney?", r: ["Mickey", "Jerry", "Stuart"] },
-            { p: "¿De qué color es Shrek?", r: ["Verde", "Azul", "Marrón"] }
-        ];
-        const azar = misPreguntas[Math.floor(Math.random() * misPreguntas.length)];
-        document.getElementById('pregunta').innerText = azar.p;
-        azar.r.forEach(res => {
-            const b = document.createElement('button');
-            b.innerText = res; b.className = "btn-menta";
-            b.onclick = () => alert("Respuesta: " + res);
-            document.getElementById('opciones').appendChild(b);
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4",
+            authDomain: "trivial-clase.firebaseapp.com",
+            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "trivial-clase",
+            storageBucket: "trivial-clase.firebasestorage.app",
+            messagingSenderId: "692832052784",
+            appId: "1:692832052784:web:72f9568beaf847a706aff5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 1. CAMBIA AQUÍ EL COLOR: 'preguntas/rojo', 'preguntas/verde', etc.
+        get(ref(db, 'preguntas/verde')).then((snapshot) => {
+            let preguntas = [];
+            if (snapshot.exists()) {
+                preguntas = Object.values(snapshot.val());
+            } else {
+                preguntas = [{p: "No hay preguntas. Claudia debe añadirlas.", r: ["OK"]}];
+            }
+
+            const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
+            document.getElementById('txtP').innerText = azar.p;
+            azar.r.forEach(res => {
+                const b = document.createElement('button');
+                b.innerText = res; 
+                // 2. CAMBIA AQUÍ LA CLASE: 'btn-rojo', 'btn-verde', etc.
+                b.className = "btn-verde"; 
+                b.onclick = () => alert("Elegiste: " + res);
+                document.getElementById('opts').appendChild(b);
+            });
         });
     </script>
 </body>
