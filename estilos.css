@@ -1,25 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
 * { box-sizing: border-box; }
-body {
-    font-family: 'Montserrat', sans-serif;
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; margin: 0; background-color: #f8f9fa; padding: 20px;
-}
-.container {
-    background: white; padding: 2rem; border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center;
-    width: 100%; max-width: 400px;
-}
-input {
-    width: 100%; padding: 12px; margin-bottom: 10px;
-    border-radius: 8px; border: 1px solid #ddd; font-family: 'Montserrat';
-}
-button {
-    padding: 12px; font-size: 0.95rem; font-family: 'Montserrat';
-    font-weight: 600; border: none; border-radius: 8px;
-    cursor: pointer; transition: 0.2s; width: 100%; margin-top: 5px;
-}
+body { font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f8f9fa; padding: 20px; }
+.container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 450px; }
+input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Montserrat'; }
+button { padding: 12px; font-size: 0.95rem; font-family: 'Montserrat'; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 5px; }
 .btn-rojo { background-color: #ff5f5f; color: white; }
 .btn-verde { background-color: #48c9b0; color: white; }
 .btn-amarillo { background-color: #f4d03f; color: #333; }
