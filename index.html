@@ -3,32 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="estilos.css?v=1.3">
     <title>Login - Trivial</title>
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido al Trivial</h1>
+        <h1>Trivial de Clase</h1>
         <div class="opciones-container">
-            <input type="text" id="user" placeholder="Usuario" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
-            <input type="password" id="pass" placeholder="Contraseña" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+            <input type="text" id="user" placeholder="Usuario">
+            <input type="password" id="pass" placeholder="Contraseña">
             <button class="btn-morado" onclick="login()">Entrar</button>
         </div>
-        <p id="error" style="color:red; display:none; margin-top:10px;">Datos incorrectos</p>
+        <p id="error" style="color:#ff5f5f; display:none; margin-top:15px; font-weight:600;">⚠️ Datos incorrectos</p>
     </div>
-
     <script>
         function login() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-
-            if (u === "claudia" && p === "jorgemiamog") {
-                location.href = "admin.html"; // Panel de control
-            } else if (u === "alumno" && p === "12345") {
-                location.href = "menu.html"; // El menú de botones que tenías antes
-            } else {
-                document.getElementById('error').style.display = 'block';
-            }
+            const u = document.getElementById('user').value.trim();
+            const p = document.getElementById('pass').value.trim();
+            if (u === "claudia" && p === "jorgemiamog") { location.href = "admin.html"; }
+            else if (u === "alumno" && p === "12345") { location.href = "menu.html"; }
+            else { document.getElementById('error').style.display = 'block'; }
         }
     </script>
 </body>
