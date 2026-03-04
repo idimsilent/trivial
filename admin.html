@@ -2,28 +2,64 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css?v=1.5">
-    <title>Panel Claudia - Firebase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilos.css?v=1.6">
+    <title>Panel Claudia - Gestión</title>
+    <style>
+        .card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; text-align: left; position: relative; }
+        .tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 5px; color: white; margin-bottom: 5px; display: inline-block; }
+        .btn-del { background: #ff5f5f; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; float: right; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Panel Admin Nube ☁️</h1>
-        <select id="colorSel">
-            <option value="rojo">Rojo (Geografía)</option>
-            <option value="verde">Verde (Arte)</option>
-            <option value="amarillo">Amarillo (Deportes)</option>
-            <option value="morado">Morado (Ciencia)</option>
-            <option value="menta">Menta (Entretenimiento)</option>
-        </select>
-        <input type="text" id="pregunta" placeholder="Pregunta">
-        <input type="text" id="respuestas" placeholder="Respuestas (separadas por comas)">
-        <button class="btn-verde" id="btnGuardar">Añadir a la Nube</button>
-        <button class="btn-volver" onclick="location.href='index.html'">Cerrar Sesión</button>
+    <div class="container" style="max-width: 600px;">
+        <h1>Panel Admin 👑</h1>
+        
+        <div id="step1">
+            <p>Elige color para gestionar:</p>
+            <button class="btn-rojo" onclick="abrirColor('rojo')">Rojo</button>
+            <button class="btn-verde" onclick="abrirColor('verde')">Verde</button>
+            <button class="btn-amarillo" onclick="abrirColor('amarillo')">Amarillo</button>
+            <button class="btn-morado" onclick="abrirColor('morado')">Morado</button>
+            <button class="btn-menta" onclick="abrirColor('menta')">Menta</button>
+            <button class="btn-volver" onclick="location.href='index.html'">Cerrar Sesión</button>
+        </div>
+
+        <div id="step2" class="hidden">
+            <h2 id="tituloColor">Color</h2>
+            <button class="btn-verde" onclick="mostrarForm()">+ Añadir Pregunta</button>
+            <hr>
+            <div id="listaPreguntas">Cargando preguntas...</div>
+            <button class="btn-volver" onclick="volverPaso1()">Volver</button>
+        </div>
+
+        <div id="step3" class="hidden">
+            <h2 id="tipoAccion">Nueva Pregunta</h2>
+            <select id="tipoPregunta" onchange="cambiarInterfaz()">
+                <option value="test">Tipo Test (Opciones)</option>
+                <option value="def">Tipo Definición (Texto directo)</option>
+            </select>
+            
+            <input type="text" id="preguntaTxt" placeholder="Escribe la pregunta o concepto">
+            
+            <div id="bloqueTest">
+                <input type="text" id="opcionesTxt" placeholder="Opciones separadas por comas">
+                <input type="text" id="correctaTxt" placeholder="¿Cuál es la correcta? (Escríbela igual)">
+            </div>
+
+            <div id="bloqueDef" class="hidden">
+                <textarea id="definicionTxt" placeholder="Escribe la definición aquí" style="height:100px; width:100%; border-radius:8px; border:1px solid #ddd;"></textarea>
+            </div>
+
+            <button class="btn-morado" id="btnGuardar">Guardar en la Nube</button>
+            <button class="btn-volver" onclick="volverPaso2()">Cancelar</button>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, push, get, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4",
@@ -37,19 +73,87 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        let colorActual = "";
 
-        document.getElementById('btnGuardar').onclick = function() {
-            const color = document.getElementById('colorSel').value;
-            const p = document.getElementById('pregunta').value;
-            const r = document.getElementById('respuestas').value.split(',').map(i => i.trim());
-            if(!p || r.length < 1) return alert("Rellena todo");
+        // NAVEGACIÓN
+        window.abrirColor = (color) => {
+            colorActual = color;
+            document.getElementById('tituloColor').innerText = "Gestionando: " + color.toUpperCase();
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            cargarPreguntas();
+        };
 
-            push(ref(db, 'preguntas/' + color), { p, r })
-            .then(() => {
-                alert("¡Guardado en Firebase!");
-                document.getElementById('pregunta').value = "";
-                document.getElementById('respuestas').value = "";
-            });
+        window.volverPaso1 = () => {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        };
+
+        window.mostrarForm = () => {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        };
+
+        window.volverPaso2 = () => {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        };
+
+        window.cambiarInterfaz = () => {
+            const tipo = document.getElementById('tipoPregunta').value;
+            document.getElementById('bloqueTest').classList.toggle('hidden', tipo !== 'test');
+            document.getElementById('bloqueDef').classList.toggle('hidden', tipo !== 'def');
+        };
+
+        // LÓGICA FIREBASE
+        async function cargarPreguntas() {
+            const container = document.getElementById('listaPreguntas');
+            container.innerHTML = "Cargando...";
+            const snapshot = await get(ref(db, 'preguntas/' + colorActual));
+            container.innerHTML = "";
+            
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                for (let id in data) {
+                    const p = data[id];
+                    const div = document.createElement('div');
+                    div.className = "card";
+                    div.innerHTML = `
+                        <button class="btn-del" onclick="eliminar('${id}')">X</button>
+                        <span class="tag" style="background:#aaa">${p.tipo}</span>
+                        <div><strong>${p.p}</strong></div>
+                    `;
+                    container.appendChild(div);
+                }
+            } else {
+                container.innerHTML = "No hay preguntas en este color.";
+            }
+        }
+
+        window.eliminar = async (id) => {
+            if(confirm("¿Seguro que quieres borrarla?")) {
+                await remove(ref(db, `preguntas/${colorActual}/${id}`));
+                cargarPreguntas();
+            }
+        };
+
+        document.getElementById('btnGuardar').onclick = async () => {
+            const tipo = document.getElementById('tipoPregunta').value;
+            const p = document.getElementById('preguntaTxt').value;
+            let obj = { tipo, p };
+
+            if(tipo === 'test') {
+                obj.r = document.getElementById('opcionesTxt').value.split(',').map(i => i.trim());
+                obj.correcta = document.getElementById('correctaTxt').value.trim();
+            } else {
+                obj.definicion = document.getElementById('definicionTxt').value;
+            }
+
+            await push(ref(db, 'preguntas/' + colorActual), obj);
+            alert("¡Guardado!");
+            document.getElementById('preguntaTxt').value = "";
+            volverPaso2();
+            cargarPreguntas();
         };
     </script>
 </body>
