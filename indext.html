@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Web de Preguntas</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 15px; shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 500px; }
+        button { width: 100%; margin: 5px 0; padding: 15px; font-size: 16px; cursor: pointer; border: none; border-radius: 8px; transition: 0.3s; }
+        .btn-cat { background-color: #007bff; color: white; }
+        .btn-cat:hover { background-color: #0056b3; }
+        #zona-pregunta { display: none; margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px; }
+        .respuesta { background-color: #e9ecef; margin: 5px 0; }
+        .btn-volver { background-color: #6c757d; color: white; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="menu-principal">
+        <h1>Elige una Categoría</h1>
+        <button class="btn-cat" onclick="generarPregunta(0)">Categoría 1</button>
+        <button class="btn-cat" onclick="generarPregunta(1)">Categoría 2</button>
+        <button class="btn-cat" onclick="generarPregunta(2)">Categoría 3</button>
+        <button class="btn-cat" onclick="generarPregunta(3)">Categoría 4</button>
+        <button class="btn-cat" onclick="generarPregunta(4)">Categoría 5</button>
+    </div>
+
+    <div class="container" id="zona-pregunta">
+        <h2 id="titulo-pregunta"></h2>
+        <div id="opciones"></div>
+        <button class="btn-volver" onclick="volver()">Volver al Menú</button>
+    </div>
+
+    <script>
+        // AQUÍ PUEDES AÑADIR TODAS LAS PREGUNTAS QUE QUIERAS
+        const baseDeDatos = [
+            [ // Categoría 1
+                { p: "¿Cuál es la capital de España?", r: ["Madrid", "Barcelona", "Sevilla"] },
+                { p: "¿Qué color sale de mezclar azul y amarillo?", r: ["Verde", "Rosa", "Gris"] }
+            ],
+            [ // Categoría 2
+                { p: "¿Cuánto es 5 x 5?", r: ["25", "30", "20"] },
+                { p: "¿Cuántos continentes hay?", r: ["6", "5", "7"] }
+            ],
+            [ // Categoría 3 (y así hasta 5...)
+                { p: "¿Quién pintó la Mona Lisa?", r: ["Da Vinci", "Picasso", "Dalí"] }
+            ],
+            [ { p: "Pregunta Cat 4", r: ["R1", "R2"] } ],
+            [ { p: "Pregunta Cat 5", r: ["R1", "R2"] } ]
+        ];
+
+        function generarPregunta(index) {
+            const categoria = baseDeDatos[index];
+            const aleatoria = categoria[Math.floor(Math.random() * categoria.length)];
+            
+            document.getElementById('menu-principal').style.display = 'none';
+            document.getElementById('zona-pregunta').style.display = 'block';
+            
+            document.getElementById('titulo-pregunta').innerText = aleatoria.p;
+            const divOpciones = document.getElementById('opciones');
+            divOpciones.innerHTML = ""; // Limpiar opciones anteriores
+
+            aleatoria.r.forEach(respuesta => {
+                const btn = document.createElement('button');
+                btn.className = 'respuesta';
+                btn.innerText = respuesta;
+                btn.onclick = () => alert("Has seleccionado: " + respuesta);
+                divOpciones.appendChild(btn);
+            });
+        }
+
+        function volver() {
+            document.getElementById('menu-principal').style.display = 'block';
+            document.getElementById('zona-pregunta').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
