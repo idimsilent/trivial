@@ -1,45 +1,88 @@
-font-family: 'Open Sans', sans-serif;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-min-height: 100vh;
-margin: 0;
-background-color: #f0faff;
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
 
 .container {
     background: white;
-    padding: 2.5rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     text-align: center;
-    width: 90%;
-    max-width: 550px;
+    width: 100%;
+    max-width: 400px; /* Contenedor más estrecho y elegante */
 }
 
-h1, h2 { font-family: 'Fredoka One', cursive; color: #2c3e50; }
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    color: #444;
+}
 
 .btn-cat-container, .opciones-container {
-    display: grid;
-    gap: 15px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 button {
-    padding: 18px;
-    font-size: 18px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
+    padding: 12px 20px; /* Botones más pequeños */
+    font-size: 0.95rem;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
 }
 
-/* Colores específicos */
-.btn-rojo { background-color: #FF6B6B; color: white; }
-.btn-verde { background-color: #4ECDC4; color: white; }
-.btn-amarillo { background-color: #FFD93D; color: #333; }
-.btn-morado { background-color: #6C5CE7; color: white; }
-.btn-menta { background-color: #A8E6CF; color: #333; }
+button:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+}
 
-button:hover { opacity: 0.9; transform: scale(1.02); }
+/* Colores de los botones */
+.btn-rojo { background-color: #ff5f5f; color: white; }
+.btn-verde { background-color: #48c9b0; color: white; }
+.btn-amarillo { background-color: #f4d03f; color: #333; }
+.btn-morado { background-color: #a569bd; color: white; }
+.btn-menta { background-color: #82e0aa; color: #333; }
+
+/* Botón volver */
+.btn-volver {
+    margin-top: 20px;
+    background-color: #bdc3c7;
+    color: white;
+    font-size: 0.8rem;
+    padding: 8px;
+}
+
+/* Ajustes para móviles muy pequeños */
+@media (max-width: 350px) {
+    .container {
+        padding: 1.5rem;
+    }
+    h1 { font-size: 1.2rem; }
+    button { font-size: 0.85rem; }
+}
