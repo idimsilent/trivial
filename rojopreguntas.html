@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2 id="pregunta">Cargando...</h2>
+        <div id="opciones" class="opciones-container"></div>
+        <button onclick="location.href='index.html'" style="margin-top:20px; background:#95a5a6; color:white;">Volver</button>
+    </div>
+
+    <script>
+        // AQUÍ DEFINES TUS PREGUNTAS PARA ESTE COLOR
+        const misPreguntas = [
+            { p: "¿Capital de Francia?", r: ["París", "Berlín", "Roma"] },
+            { p: "¿Río más largo?", r: ["Amazonas", "Nilo", "Ebro"] }
+        ];
+
+        const azar = misPreguntas[Math.floor(Math.random() * misPreguntas.length)];
+        document.getElementById('pregunta').innerText = azar.p;
+        
+        azar.r.forEach(res => {
+            const b = document.createElement('button');
+            b.innerText = res;
+            b.className = "btn-rojo"; // Usa la clase del color que toque
+            b.onclick = () => alert("Elegiste: " + res);
+            document.getElementById('opciones').appendChild(b);
+        });
+    </script>
+</body>
+</html>
