@@ -1,0 +1,2 @@
+# trivial
+juego de preguntas
