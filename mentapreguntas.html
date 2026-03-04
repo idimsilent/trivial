@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2 id="pregunta">Cargando...</h2>
+        <div id="opciones" class="opciones-container"></div>
+        <button onclick="location.href='index.html'" style="margin-top:20px; background:#95a5a6; color:white;">Volver</button>
+    </div>
+    <script>
+        const misPreguntas = [
+            { p: "¿Cómo se llama el ratón de Disney?", r: ["Mickey", "Jerry", "Stuart"] },
+            { p: "¿De qué color es Shrek?", r: ["Verde", "Azul", "Marrón"] }
+        ];
+        const azar = misPreguntas[Math.floor(Math.random() * misPreguntas.length)];
+        document.getElementById('pregunta').innerText = azar.p;
+        azar.r.forEach(res => {
+            const b = document.createElement('button');
+            b.innerText = res; b.className = "btn-menta";
+            b.onclick = () => alert("Respuesta: " + res);
+            document.getElementById('opciones').appendChild(b);
+        });
+    </script>
+</body>
+</html>
