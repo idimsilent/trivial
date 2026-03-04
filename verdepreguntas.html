@@ -11,22 +11,17 @@
         <div id="opciones" class="opciones-container"></div>
         <button onclick="location.href='index.html'" style="margin-top:20px; background:#95a5a6; color:white;">Volver</button>
     </div>
-
     <script>
-        // AQUÍ DEFINES TUS PREGUNTAS PARA ESTE COLOR
         const misPreguntas = [
-            { p: "¿Capital de Francia?", r: ["París", "Berlín", "Roma"] },
-            { p: "¿Río más largo?", r: ["Amazonas", "Nilo", "Ebro"] }
+            { p: "¿Quién pintó la Mona Lisa?", r: ["Da Vinci", "Miguel Ángel", "Rafael"] },
+            { p: "¿En qué país nació Picasso?", r: ["España", "Francia", "Italia"] }
         ];
-
         const azar = misPreguntas[Math.floor(Math.random() * misPreguntas.length)];
         document.getElementById('pregunta').innerText = azar.p;
-        
         azar.r.forEach(res => {
             const b = document.createElement('button');
-            b.innerText = res;
-            b.className = "btn-rojo"; // Usa la clase del color que toque
-            b.onclick = () => alert("Elegiste: " + res);
+            b.innerText = res; b.className = "btn-verde";
+            b.onclick = () => alert("Respuesta: " + res);
             document.getElementById('opciones').appendChild(b);
         });
     </script>
