@@ -10,3 +10,13 @@ button { padding: 12px; font-size: 0.95rem; font-family: 'Montserrat'; font-weig
 .btn-morado { background-color: #a569bd; color: white; }
 .btn-menta { background-color: #82e0aa; color: #333; }
 .btn-volver { background-color: #bdc3c7; color: white; margin-top: 20px; font-size: 0.8rem; }
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+    button {
+        font-size: 1rem;
+        padding: 15px; /* Botones más grandes para que sea fácil darles con el dedo */
+    }
+}
