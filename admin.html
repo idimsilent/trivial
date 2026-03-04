@@ -2,14 +2,53 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css?v=1.3">
+    <link rel="stylesheet" href="estilos.css?v=1.4">
+    <title>Panel Admin - Claudia</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Panel Admin 👑</h1>
-        <p>Hola Claudia, aquí podrás gestionar las preguntas editando los archivos en GitHub.</p>
-        <button class="btn-rojo" onclick="alert('Para editar: Ve a GitHub, abre rojopreguntas.html y cambia el código')">Editar Rojo</button>
-        <button class="btn-volver" onclick="location.href='index.html'">Salir</button>
+    <div class="container" style="max-width: 500px;">
+        <h1>Editor de Preguntas ✍️</h1>
+        <label>Elige Color:</label>
+        <select id="colorSel" style="width:100%; padding:10px; margin:10px 0;">
+            <option value="rojo">Rojo (Geografía)</option>
+            <option value="verde">Verde (Arte)</option>
+            <option value="amarillo">Amarillo (Deportes)</option>
+        </select>
+
+        <input type="text" id="nuevaP" placeholder="Escribe la pregunta">
+        <input type="text" id="respuestas" placeholder="Respuestas (separadas por comas)">
+        
+        <button class="btn-verde" onclick="guardarPregunta()">Añadir Pregunta</button>
+        <button class="btn-rojo" onclick="borrarTodo()" style="margin-top:10px;">Borrar todo este color</button>
+        
+        <button class="btn-volver" onclick="location.href='index.html'">Cerrar Sesión</button>
     </div>
+
+    <script>
+        function guardarPregunta() {
+            const color = document.getElementById('colorSel').value;
+            const p = document.getElementById('nuevaP').value;
+            const r = document.getElementById('respuestas').value.split(',');
+
+            if(!p || r.length < 2) return alert("Rellena todo bien");
+
+            // Sacamos lo que ya haya guardado o creamos un array vacío
+            let preguntas = JSON.parse(localStorage.getItem('preguntas_' + color)) || [];
+            preguntas.push({ p: p, r: r });
+
+            // Guardamos en la memoria del navegador
+            localStorage.setItem('preguntas_' + color, JSON.stringify(preguntas));
+            
+            alert("¡Pregunta añadida a la categoría " + color + "!");
+            document.getElementById('nuevaP').value = "";
+            document.getElementById('respuestas').value = "";
+        }
+
+        function borrarTodo() {
+            const color = document.getElementById('colorSel').value;
+            localStorage.removeItem('preguntas_' + color);
+            alert("Memoria de " + color + " limpiada.");
+        }
+    </script>
 </body>
 </html>
