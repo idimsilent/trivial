@@ -3,51 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="estilos.css?v=1.4">
-    <title>Panel Admin - Claudia</title>
+    <title>Panel Claudia</title>
 </head>
 <body>
-    <div class="container" style="max-width: 500px;">
-        <h1>Editor de Preguntas ✍️</h1>
-        <label>Elige Color:</label>
-        <select id="colorSel" style="width:100%; padding:10px; margin:10px 0;">
+    <div class="container">
+        <h1>Panel Admin 👑</h1>
+        <select id="colorSel">
             <option value="rojo">Rojo (Geografía)</option>
             <option value="verde">Verde (Arte)</option>
             <option value="amarillo">Amarillo (Deportes)</option>
+            <option value="morado">Morado (Ciencia)</option>
+            <option value="menta">Menta (Entretenimiento)</option>
         </select>
-
-        <input type="text" id="nuevaP" placeholder="Escribe la pregunta">
+        <input type="text" id="pregunta" placeholder="Pregunta">
         <input type="text" id="respuestas" placeholder="Respuestas (separadas por comas)">
-        
-        <button class="btn-verde" onclick="guardarPregunta()">Añadir Pregunta</button>
-        <button class="btn-rojo" onclick="borrarTodo()" style="margin-top:10px;">Borrar todo este color</button>
-        
+        <button class="btn-verde" onclick="guardar()">Añadir Pregunta</button>
+        <button class="btn-rojo" onclick="borrar()" style="margin-top:20px;">Borrar todo este color</button>
         <button class="btn-volver" onclick="location.href='index.html'">Cerrar Sesión</button>
     </div>
-
     <script>
-        function guardarPregunta() {
+        function guardar() {
             const color = document.getElementById('colorSel').value;
-            const p = document.getElementById('nuevaP').value;
-            const r = document.getElementById('respuestas').value.split(',');
-
-            if(!p || r.length < 2) return alert("Rellena todo bien");
-
-            // Sacamos lo que ya haya guardado o creamos un array vacío
-            let preguntas = JSON.parse(localStorage.getItem('preguntas_' + color)) || [];
-            preguntas.push({ p: p, r: r });
-
-            // Guardamos en la memoria del navegador
-            localStorage.setItem('preguntas_' + color, JSON.stringify(preguntas));
-            
-            alert("¡Pregunta añadida a la categoría " + color + "!");
-            document.getElementById('nuevaP').value = "";
+            const p = document.getElementById('pregunta').value;
+            const r = document.getElementById('respuestas').value.split(',').map(item => item.trim());
+            if(!p || r.length < 1) return alert("Rellena los campos");
+            let data = JSON.parse(localStorage.getItem('preguntas_' + color)) || [];
+            data.push({ p: p, r: r });
+            localStorage.setItem('preguntas_' + color, JSON.stringify(data));
+            alert("¡Pregunta guardada en categoría " + color + "!");
+            document.getElementById('pregunta').value = "";
             document.getElementById('respuestas').value = "";
         }
-
-        function borrarTodo() {
+        function borrar() {
             const color = document.getElementById('colorSel').value;
             localStorage.removeItem('preguntas_' + color);
-            alert("Memoria de " + color + " limpiada.");
+            alert("Memoria de " + color + " borrada.");
         }
     </script>
 </body>
