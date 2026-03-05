@@ -4,12 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trivial de Clase - Menú</title>
-    <link rel="stylesheet" href="estilos.css?v=5.0">
+    <link rel="stylesheet" href="estilos.css?v=5.2">
     <style>
-        .container { max-width: 500px; margin: 0 auto; text-align: center; padding: 20px; }
-        .opciones-container { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-        
-        /* Botones dinámicos */
+        /* ESTILOS VISUALES */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f0f2f5; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            color: #2d3436;
+        }
+        .container { 
+            width: 90%; 
+            max-width: 500px; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
+        h1 { 
+            font-size: 2.2rem; 
+            margin-bottom: 10px; 
+            color: #2d3436;
+        }
+        .subtitle { 
+            color: #636e72; 
+            margin-bottom: 30px; 
+            font-size: 1.1rem;
+        }
+
+        /* CONTENEDOR DE BOTONES */
+        .opciones-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+
+        /* BOTONES DINÁMICOS */
         .btn-menu {
             padding: 20px;
             border: none;
@@ -19,24 +54,46 @@
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: block;
         }
-        .btn-menu:active { transform: scale(0.95); }
+
+        .btn-menu:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-menu:active {
+            transform: scale(0.96);
+        }
+
+        /* ESTILO CARGANDO */
+        .loader {
+            color: #b2bec3;
+            font-style: italic;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Elige una categoría</h1>
+        <h1>Trivial de Clase 🎓</h1>
+        <p class="subtitle">Selecciona una categoría para jugar:</p>
+        
         <div class="opciones-container" id="contenedor-botones">
-            <p>Cargando categorías...</p>
+            <div class="loader">Cargando categorías...</div>
         </div>
     </div>
 
     <script type="module">
+        // IMPORTAR FIREBASE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // CONFIGURACIÓN (Asegúrate de que coincida con tu Admin)
         const firebaseConfig = { 
             apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
             authDomain: "trivial-clase.firebaseapp.com", 
@@ -52,28 +109,46 @@
 
         async function cargarCategorias() {
             const cont = document.getElementById('contenedor-botones');
-            const snap = await get(ref(db, 'configuracion'));
             
-            if (snap.exists()) {
-                cont.innerHTML = "";
-                Object.entries(snap.val()).forEach(([id, data]) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-menu';
-                    btn.innerText = data.nombre;
-                    btn.style.backgroundColor = data.color;
+            try {
+                const snap = await get(ref(db, 'configuracion'));
+                
+                if (snap.exists()) {
+                    cont.innerHTML = ""; // Limpiar el "Cargando..."
                     
-                    // Al hacer clic, enviamos el ID y el Color a juego.html
-                    btn.onclick = () => {
-                        location.href = `juego.html?id=${id}&color=${encodeURIComponent(data.color)}`;
-                    };
-                    
-                    cont.appendChild(btn);
-                });
-            } else {
-                cont.innerHTML = "<p>No hay categorías creadas.</p>";
+                    // --- LÓGICA DE ORDENACIÓN ---
+                    // Convertimos el objeto en array y ordenamos por el campo "orden" (menor a mayor)
+                    const categoriasOrdenadas = Object.entries(snap.val()).sort((a, b) => {
+                        const ordenA = a[1].orden || 0;
+                        const ordenB = b[1].orden || 0;
+                        return ordenA - ordenB;
+                    });
+
+                    // CREAR BOTONES
+                    categoriasOrdenadas.forEach(([id, data]) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-menu';
+                        btn.innerText = data.nombre;
+                        btn.style.backgroundColor = data.color;
+                        
+                        // AL CLICAR: Envía el ID y el Color a juego.html por la URL
+                        btn.onclick = () => {
+                            const urlDestino = `juego.html?id=${id}&color=${encodeURIComponent(data.color)}`;
+                            location.href = urlDestino;
+                        };
+                        
+                        cont.appendChild(btn);
+                    });
+                } else {
+                    cont.innerHTML = "<p style='color:#ee5253;'>No hay categorías disponibles aún.</p>";
+                }
+            } catch (error) {
+                console.error("Error al cargar:", error);
+                cont.innerHTML = "<p>Error al conectar con la base de datos.</p>";
             }
         }
 
+        // Ejecutar al cargar la página
         cargarCategorias();
     </script>
 </body>
