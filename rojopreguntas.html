@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=2.0">
+    <link rel="stylesheet" href="estilos.css?v=2.1">
     <title>Trivial - Rojo</title>
 </head>
 <body>
@@ -14,10 +14,8 @@
             </div>
         </div>
 
-        <h2 id="txtP">Cargando pregunta...</h2>
-        
+        <h2 id="txtP">Cargando...</h2>
         <div id="contenido" class="opciones-container"></div>
-
         <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.2rem; text-transform: uppercase;"></div>
         
         <div id="pContainer" class="progress-container">
@@ -48,9 +46,10 @@
         const COLOR_NOMBRE = 'rojo'; 
         const CLASE_BTN = 'btn-rojo';
 
-        // Sonidos de sistema (Google)
-        const sonidoAcierto = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'); 
-        const sonidoFallo = new Audio('https://actions.google.com/sounds/v1/cartoon/boing.ogg');
+        // --- SONIDOS MEJORADOS ---
+        // Usamos sonidos cortos de sistema para asegurar compatibilidad
+        const sonidoAcierto = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'); 
+        const sonidoFallo = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c35278d327.mp3');
 
         let tiempoRestante = 60;
         let totalTiempo = 60;
@@ -62,17 +61,16 @@
             const text = document.getElementById('timerNum');
 
             intervaloCrono = setInterval(() => {
+                if (juegoTerminado) return;
                 tiempoRestante--;
                 text.innerText = tiempoRestante;
 
                 const grados = ((totalTiempo - tiempoRestante) / totalTiempo) * 360;
-                
                 let color = "#27ae60"; 
                 if (tiempoRestante <= 30) color = "#f1c40f"; 
                 if (tiempoRestante <= 15) color = "#e67e22"; 
                 if (tiempoRestante <= 7)  color = "#e74c3c"; 
                 
-                // Forzamos el degradado en el background-image
                 circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eeeeee ${grados}deg)`;
 
                 if (tiempoRestante <= 0) {
@@ -91,10 +89,10 @@
             
             if (resultado === "acierto") {
                 f.style.color = "#27ae60";
-                sonidoAcierto.play().catch(() => console.log("Audio esperando interacción"));
+                sonidoAcierto.play().catch(e => console.log("Error audio"));
             } else {
                 f.style.color = "#e74c3c";
-                sonidoFallo.play().catch(() => console.log("Audio esperando interacción"));
+                sonidoFallo.play().catch(e => console.log("Error audio"));
             }
 
             document.getElementById('contenido').style.pointerEvents = "none";
@@ -129,16 +127,29 @@
                         cont.appendChild(b);
                     });
                 } else {
+                    // --- MODO DEFINICIÓN CON ELECCIÓN ---
                     const pDef = document.createElement('div');
                     pDef.innerText = azar.definicion;
                     pDef.className = "definicion-box";
                     cont.appendChild(pDef);
                     
-                    const bOK = document.createElement('button');
-                    bOK.innerText = "¡Lo tengo!"; 
-                    bOK.className = CLASE_BTN;
-                    bOK.onclick = () => finalizarJuego("acierto", `📖 Quesito ${COLOR_NOMBRE} conseguido.`);
-                    cont.appendChild(bOK);
+                    const divBotones = document.createElement('div');
+                    divBotones.style.display = "flex";
+                    divBotones.style.gap = "10px";
+
+                    const bAcierto = document.createElement('button');
+                    bAcierto.innerText = "¡La sabía! ✅"; 
+                    bAcierto.className = "btn-verde"; // Usamos clase verde para acierto
+                    bAcierto.onclick = () => finalizarJuego("acierto", `✨ ¡Bien hecho! Quesito ${COLOR_NOMBRE} conseguido.`);
+
+                    const bFallo = document.createElement('button');
+                    bFallo.innerText = "No la sabía... ❌"; 
+                    bFallo.className = "btn-rojo"; // Usamos clase roja para fallo
+                    bFallo.onclick = () => finalizarJuego("fallo", `❌ ¡Qué pena! Has perdido el quesito ${COLOR_NOMBRE}.`);
+
+                    divBotones.appendChild(bAcierto);
+                    divBotones.appendChild(bFallo);
+                    cont.appendChild(divBotones);
                 }
             }
         });
