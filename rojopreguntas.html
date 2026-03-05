@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=2.1">
+    <link rel="stylesheet" href="estilos.css?v=2.6">
     <title>Trivial - Rojo</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
         <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.2rem; text-transform: uppercase;"></div>
         
         <div id="pContainer" class="progress-container">
-            <p id="txtVolviendo" style="font-size: 0.9rem; margin-bottom: 8px; color: #666;">Volviendo al menú...</p>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">Volviendo al menú...</p>
             <div class="p-bar-bg">
                 <div id="pBar" class="progress-bar"></div>
             </div>
@@ -46,10 +46,15 @@
         const COLOR_NOMBRE = 'rojo'; 
         const CLASE_BTN = 'btn-rojo';
 
-        // --- SONIDOS MEJORADOS ---
-        // Usamos sonidos cortos de sistema para asegurar compatibilidad
-        const sonidoAcierto = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'); 
+        // --- SONIDOS OFICIALES DE GOOGLE ---
+        const sonidoAcierto = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'); 
         const sonidoFallo = new Audio('https://actions.google.com/sounds/v1/foley/beeps_error_set.ogg');
+
+        // Desbloqueo automático al primer clic
+        document.addEventListener('click', () => {
+            sonidoAcierto.load();
+            sonidoFallo.load();
+        }, { once: true });
 
         let tiempoRestante = 60;
         let totalTiempo = 60;
@@ -74,7 +79,7 @@
                 circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eeeeee ${grados}deg)`;
 
                 if (tiempoRestante <= 0) {
-                    finalizarJuego("fallo", `⏰ ¡TIEMPO! Has perdido el quesito ${COLOR_NOMBRE}`);
+                    finalizarJuego("fallo", `⏰ ¡TIEMPO! Pierdes el quesito ${COLOR_NOMBRE}`);
                 }
             }, 1000);
         }
@@ -89,10 +94,10 @@
             
             if (resultado === "acierto") {
                 f.style.color = "#27ae60";
-                sonidoAcierto.play().catch(e => console.log("Error audio"));
+                sonidoAcierto.play().catch(() => {});
             } else {
                 f.style.color = "#e74c3c";
-                sonidoFallo.play().catch(e => console.log("Error audio"));
+                sonidoFallo.play().catch(() => {});
             }
 
             document.getElementById('contenido').style.pointerEvents = "none";
@@ -119,37 +124,32 @@
                         b.className = CLASE_BTN;
                         b.onclick = () => {
                             if(res === azar.correcta) {
-                                finalizarJuego("acierto", `✨ ¡GENIAL! Has ganado el quesito ${COLOR_NOMBRE}`);
+                                finalizarJuego("acierto", `✨ ¡GANAS EL QUESITO ${COLOR_NOMBRE.toUpperCase()}!`);
                             } else {
-                                finalizarJuego("fallo", `❌ ¡FALLO! Pierdes el quesito ${COLOR_NOMBRE}. Era: ${azar.correcta}`);
+                                finalizarJuego("fallo", `❌ ¡FALLO! PIERDES EL QUESITO ${COLOR_NOMBRE.toUpperCase()}.`);
                             }
                         };
                         cont.appendChild(b);
                     });
                 } else {
-                    // --- MODO DEFINICIÓN CON ELECCIÓN ---
                     const pDef = document.createElement('div');
                     pDef.innerText = azar.definicion;
                     pDef.className = "definicion-box";
                     cont.appendChild(pDef);
                     
-                    const divBotones = document.createElement('div');
-                    divBotones.style.display = "flex";
-                    divBotones.style.gap = "10px";
-
                     const bAcierto = document.createElement('button');
-                    bAcierto.innerText = "¡La sabía! ✅"; 
-                    bAcierto.className = "btn-verde"; // Usamos clase verde para acierto
-                    bAcierto.onclick = () => finalizarJuego("acierto", `✨ ¡Bien hecho! Quesito ${COLOR_NOMBRE} conseguido.`);
+                    bAcierto.innerText = "¡He acertado! ✅"; 
+                    bAcierto.className = "btn-verde"; 
+                    bAcierto.style.marginBottom = "10px";
+                    bAcierto.onclick = () => finalizarJuego("acierto", `✨ ¡QUESITO ${COLOR_NOMBRE.toUpperCase()} CONSEGUIDO!`);
 
                     const bFallo = document.createElement('button');
-                    bFallo.innerText = "No la sabía... ❌"; 
-                    bFallo.className = "btn-rojo"; // Usamos clase roja para fallo
-                    bFallo.onclick = () => finalizarJuego("fallo", `❌ ¡Qué pena! Has perdido el quesito ${COLOR_NOMBRE}.`);
+                    bFallo.innerText = "He fallado... ❌"; 
+                    bFallo.className = "btn-rojo"; 
+                    bFallo.onclick = () => finalizarJuego("fallo", `❌ PIERDES EL QUESITO ${COLOR_NOMBRE.toUpperCase()}.`);
 
-                    divBotones.appendChild(bAcierto);
-                    divBotones.appendChild(bFallo);
-                    cont.appendChild(divBotones);
+                    cont.appendChild(bAcierto);
+                    cont.appendChild(bFallo);
                 }
             }
         });
