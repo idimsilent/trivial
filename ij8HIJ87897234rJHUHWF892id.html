@@ -2,29 +2,115 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Categorías - Admin</title>
-    <link rel="stylesheet" href="estilos.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin Pro 👑</title>
+    <link rel="stylesheet" href="estilos.css?v=4.0">
     <style>
-        .admin-card { background: white; padding: 20px; border-radius: 15px; margin: 10px auto; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
-        input[type="text"] { flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-        input[type="color"] { width: 50px; height: 40px; border: none; cursor: pointer; }
-        .btn-save { padding: 10px 15px; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; }
+        .admin-wrapper { max-width: 500px; margin: 30px auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .category-row { 
+            display: flex; align-items: center; gap: 10px; margin-bottom: 15px; 
+        }
+        /* Botón principal de categoría */
+        .btn-main { 
+            flex-grow: 1; padding: 15px; border: none; border-radius: 12px; 
+            color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
+        
+        /* Botón del lápiz */
+        .btn-edit { 
+            background: #dfe6e9; border: none; width: 45px; height: 45px; 
+            border-radius: 10px; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .btn-edit:hover { background: #b2bec3; }
+
+        /* Modal o mini-formulario de edición (oculto por defecto) */
+        .edit-form { 
+            display: none; background: #f9f9f9; padding: 15px; 
+            border-radius: 10px; margin-bottom: 15px; border: 1px dashed #ccc;
+        }
+        .edit-form.active { display: block; }
+        .edit-form input[type="text"] { padding: 8px; width: 60%; border: 1px solid #ddd; border-radius: 5px; }
+        .edit-form input[type="color"] { vertical-align: middle; cursor: pointer; }
+        .btn-done { background: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Panel Admin 👑</h1>
-        <p>Cambia el nombre y color de las categorías:</p>
+    <div class="admin-wrapper">
+        <h1 style="text-align:center;">Panel Admin 👑</h1>
+        <p style="text-align:center; color: #666;">Toca el color para preguntas o el ✏️ para editar</p>
 
-        <div id="panel-editor">
+        <div id="categorias-container">
+            <div class="category-group">
+                <div class="category-row">
+                    <button id="btn-rojo" class="btn-main" onclick="gestionarPreguntas('rojo')">Cargando...</button>
+                    <button class="btn-edit" onclick="toggleEdit('rojo')">✏️</button>
+                </div>
+                <div id="form-rojo" class="edit-form">
+                    <input type="text" id="input-rojo" placeholder="Nuevo nombre">
+                    <input type="color" id="color-rojo">
+                    <button class="btn-done" onclick="guardarCambios('rojo')">OK</button>
+                </div>
             </div>
 
-        <button onclick="location.href='menu.html'" style="margin-top:20px; background:#ccc; border:none; padding:10px; border-radius:5px; cursor:pointer;">Volver al Menú</button>
+            <div class="category-group">
+                <div class="category-row">
+                    <button id="btn-verde" class="btn-main" onclick="gestionarPreguntas('verde')">Cargando...</button>
+                    <button class="btn-edit" onclick="toggleEdit('verde')">✏️</button>
+                </div>
+                <div id="form-verde" class="edit-form">
+                    <input type="text" id="input-verde">
+                    <input type="color" id="color-verde">
+                    <button class="btn-done" onclick="guardarCambios('verde')">OK</button>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-row">
+                    <button id="btn-amarillo" class="btn-main" onclick="gestionarPreguntas('amarillo')">Cargando...</button>
+                    <button class="btn-edit" onclick="toggleEdit('amarillo')">✏️</button>
+                </div>
+                <div id="form-amarillo" class="edit-form">
+                    <input type="text" id="input-amarillo">
+                    <input type="color" id="color-amarillo">
+                    <button class="btn-done" onclick="guardarCambios('amarillo')">OK</button>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-row">
+                    <button id="btn-morado" class="btn-main" onclick="gestionarPreguntas('morado')">Cargando...</button>
+                    <button class="btn-edit" onclick="toggleEdit('morado')">✏️</button>
+                </div>
+                <div id="form-morado" class="edit-form">
+                    <input type="text" id="input-morado">
+                    <input type="color" id="color-morado">
+                    <button class="btn-done" onclick="guardarCambios('morado')">OK</button>
+                </div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-row">
+                    <button id="btn-menta" class="btn-main" onclick="gestionarPreguntas('menta')">Cargando...</button>
+                    <button class="btn-edit" onclick="toggleEdit('menta')">✏️</button>
+                </div>
+                <div id="form-menta" class="edit-form">
+                    <input type="text" id="input-menta">
+                    <input type="color" id="color-menta">
+                    <button class="btn-done" onclick="guardarCambios('menta')">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="cerrarSesion()" style="width:100%; margin-top:20px; padding:12px; border-radius:10px; border:none; background:#b2bec3; color:white; font-weight:bold; cursor:pointer;">Cerrar Sesión</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
@@ -40,36 +126,56 @@
         const db = getDatabase(app);
         const categorias = ['rojo', 'verde', 'amarillo', 'morado', 'menta'];
 
-        const panel = document.getElementById('panel-editor');
+        // 1. CARGAR CONFIGURACIÓN INICIAL
+        async function cargarConfig() {
+            const snapshot = await get(ref(db, 'configuracion'));
+            const config = snapshot.exists() ? snapshot.val() : {};
 
-        // Cargar datos actuales y crear formularios
-        categorias.forEach(cat => {
-            get(ref(db, 'configuracion/' + cat)).then((snapshot) => {
-                const data = snapshot.exists() ? snapshot.val() : { nombre: cat.toUpperCase(), color: '#cccccc' };
+            categorias.forEach(cat => {
+                const btn = document.getElementById(`btn-${cat}`);
+                const data = config[cat] || { nombre: cat.toUpperCase(), color: '#636e72' };
                 
-                const div = document.createElement('div');
-                div.className = 'admin-card';
-                div.innerHTML = `
-                    <input type="text" id="name-${cat}" value="${data.nombre}">
-                    <input type="color" id="color-${cat}" value="${data.color}">
-                    <button onclick="guardar('${cat}')" class="btn-save" style="background: ${data.color}">Guardar</button>
-                `;
-                panel.appendChild(div);
+                btn.innerText = data.nombre;
+                btn.style.backgroundColor = data.color;
+                
+                // Rellenar inputs del formulario de edición
+                document.getElementById(`input-${cat}`).value = data.nombre;
+                document.getElementById(`color-${cat}`).value = data.color;
             });
-        });
+        }
 
-        window.guardar = (id) => {
-            const nuevoNombre = document.getElementById(`name-${id}`).value;
-            const nuevoColor = document.getElementById(`color-${id}`).value;
+        // 2. MOSTRAR/OCULTAR EDICIÓN
+        window.toggleEdit = (cat) => {
+            const form = document.getElementById(`form-${cat}`);
+            form.classList.toggle('active');
+        };
 
-            set(ref(db, 'configuracion/' + id), {
+        // 3. GUARDAR CAMBIOS DE NOMBRE/COLOR
+        window.guardarCambios = (cat) => {
+            const nuevoNombre = document.getElementById(`input-${cat}`).value;
+            const nuevoColor = document.getElementById(`color-${cat}`).value;
+
+            set(ref(db, 'configuracion/' + cat), {
                 nombre: nuevoNombre,
                 color: nuevoColor
             }).then(() => {
-                alert(`Categoría ${id} actualizada con éxito`);
-                location.reload(); // Recargar para ver los cambios de color
+                alert("Actualizado correctamente");
+                location.reload();
             });
         };
+
+        // 4. GESTIONAR PREGUNTAS (Funcionalidad que ya tenías)
+        window.gestionarPreguntas = (cat) => {
+            // Aquí pones el código que ya tenías para abrir la lista de preguntas de ese color
+            // Por ejemplo: location.href = `gestionpreguntas.html?color=${cat}`;
+            alert("Aquí se abriría tu gestor de preguntas para el color: " + cat);
+        };
+
+        window.cerrarSesion = () => {
+            location.href = 'index.html';
+        };
+
+        cargarConfig();
     </script>
 </body>
 </html>
