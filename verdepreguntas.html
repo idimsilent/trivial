@@ -3,71 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=1.6">
+    <link rel="stylesheet" href="estilos.css?v=3.0">
+    <title>Trivial - Verde</title>
 </head>
 <body>
     <div class="container">
-        <h2 id="txtP">Conectando...</h2>
+        <div class="timer-container">
+            <div id="timerCircle" class="timer-circle">
+                <span id="timerNum" class="timer-text">60</span>
+            </div>
+        </div>
+        <h2 id="txtP">Cargando pregunta...</h2>
         <div id="contenido" class="opciones-container"></div>
-        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px;"></div>
-        <button class="btn-volver" onclick="location.href='menu.html'">Volver</button>
+        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.2rem; text-transform: uppercase;"></div>
+        <div id="pContainer" class="progress-container">
+            <div class="p-bar-bg"><div id="pBar" class="progress-bar"></div></div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4",
-            authDomain: "trivial-clase.firebaseapp.com",
-            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "trivial-clase",
-            storageBucket: "trivial-clase.firebasestorage.app",
-            messagingSenderId: "692832052784",
-            appId: "1:692832052784:web:72f9568beaf847a706aff5"
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
+            authDomain: "trivial-clase.firebaseapp.com", 
+            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app", 
+            projectId: "trivial-clase", 
+            storageBucket: "trivial-clase.firebasestorage.app", 
+            messagingSenderId: "692832052784", 
+            appId: "1:692832052784:web:72f9568beaf847a706aff5" 
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const COLOR_NOMBRE = 'verde'; 
+        const CLASE_BTN = 'btn-verde';
 
-        // --- CAMBIA EL COLOR AQUÍ: 'rojo', 'verde', etc. ---
-        const colorCale = 'verde'; 
-        const claseBtn = 'btn-verde';
+        const sonidoAcierto = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'); 
+        const sonidoFallo = new Audio('https://cdn.pixabay.com/audio/2025/11/15/audio_721173197e.mp3');
 
-        get(ref(db, 'preguntas/' + colorCale)).then((snapshot) => {
+        let tiempoRestante = 60;
+        let juegoTerminado = false;
+        let intervaloCrono;
+
+        function iniciarCrono() {
+            const circle = document.getElementById('timerCircle');
+            const text = document.getElementById('timerNum');
+            intervaloCrono = setInterval(() => {
+                if (juegoTerminado) return;
+                tiempoRestante--;
+                text.innerText = tiempoRestante;
+                const grados = ((60 - tiempoRestante) / 60) * 360;
+                let color = (tiempoRestante > 30) ? "#27ae60" : (tiempoRestante > 15) ? "#f1c40f" : "#e74c3c";
+                circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eee ${grados}deg)`;
+                if (tiempoRestante <= 0) finalizarJuego("fallo", `⏰ ¡TIEMPO! Pierdes el quesito ${COLOR_NOMBRE}`);
+            }, 1000);
+        }
+
+        function finalizarJuego(resultado, mensaje) {
+            if (juegoTerminado) return;
+            juegoTerminado = true;
+            clearInterval(intervaloCrono);
+            const f = document.getElementById('feedback');
+            f.innerText = mensaje;
+            if (resultado === "acierto") { f.style.color = "#27ae60"; sonidoAcierto.play().catch(e => {}); }
+            else { f.style.color = "#e74c3c"; sonidoFallo.play().catch(e => {}); }
+            document.getElementById('contenido').style.pointerEvents = "none";
+            document.getElementById('pContainer').style.display = "block";
+            setTimeout(() => { document.getElementById('pBar').style.width = "0%"; }, 100);
+            setTimeout(() => { location.href = 'menu.html'; }, 5000);
+        }
+
+        get(ref(db, 'preguntas/' + COLOR_NOMBRE)).then((snapshot) => {
             if (snapshot.exists()) {
                 const preguntas = Object.values(snapshot.val());
                 const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
-                
                 document.getElementById('txtP').innerText = azar.p;
                 const cont = document.getElementById('contenido');
-
+                iniciarCrono();
                 if(azar.tipo === 'test') {
                     azar.r.forEach(res => {
                         const b = document.createElement('button');
-                        b.innerText = res; b.className = claseBtn;
-                        b.onclick = () => {
-                            if(res === azar.correcta) {
-                                document.getElementById('feedback').innerText = "✅ ¡CORRECTO!";
-                                document.getElementById('feedback').style.color = "green";
-                            } else {
-                                document.getElementById('feedback').innerText = "❌ FALLASTE. Era: " + azar.correcta;
-                                document.getElementById('feedback').style.color = "red";
-                            }
-                        };
+                        b.innerText = res; b.className = CLASE_BTN;
+                        b.onclick = () => (res === azar.correcta) ? finalizarJuego("acierto", "✨ ¡HAS GANADO EL QUESITO VERDE!") : finalizarJuego("fallo", "❌ HAS PERDIDO EL QUESITO VERDE");
                         cont.appendChild(b);
                     });
                 } else {
-                    // TIPO DEFINICIÓN
-                    const pDef = document.createElement('p');
-                    pDef.innerText = azar.definicion;
-                    pDef.style.background = "#f0f0f0";
-                    pDef.style.padding = "15px";
-                    pDef.style.borderRadius = "10px";
+                    const pDef = document.createElement('div');
+                    pDef.innerText = azar.definicion; pDef.className = "definicion-box";
                     cont.appendChild(pDef);
+                    const bA = document.createElement('button'); bA.innerText = "¡He acertado! ✅"; bA.className = "btn-verde";
+                    bA.onclick = () => finalizarJuego("acierto", "✨ ¡QUESITO VERDE CONSEGUIDO!");
+                    const bF = document.createElement('button'); bF.innerText = "He fallado... ❌"; bF.className = "btn-rojo";
+                    bF.onclick = () => finalizarJuego("fallo", "❌ PIERDES EL QUESITO VERDE");
+                    cont.appendChild(bA); cont.appendChild(bF);
                 }
-            } else {
-                document.getElementById('txtP').innerText = "Sin preguntas aún.";
             }
         });
     </script>
