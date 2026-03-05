@@ -1,108 +1,184 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-* { box-sizing: border-box; }
-body { font-family: 'Montserrat', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f8f9fa; padding: 20px; }
-.container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 450px; }
-input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Montserrat'; }
-button { padding: 12px; font-size: 0.95rem; font-family: 'Montserrat'; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 5px; }
-.btn-rojo { background-color: #ff5f5f; color: white; }
-.btn-verde { background-color: #48c9b0; color: white; }
-.btn-amarillo { background-color: #f4d03f; color: #333; }
-.btn-morado { background-color: #a569bd; color: white; }
-.btn-menta { background-color: #82e0aa; color: #333; }
-.btn-volver { background-color: #bdc3c7; color: white; margin-top: 20px; font-size: 0.8rem; }
-@media (max-width: 600px) {
-    .container {
-        width: 90%;
-        padding: 1.5rem;
-    }
-    button {
-        font-size: 1rem;
-        padding: 15px; /* Botones más grandes para que sea fácil darles con el dedo */
-    }
+/* IMPORTACIÓN DE FUENTE PROFESIONAL */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
 }
-/* Temporizador Circular */
-.timer-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-.timer-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 4px solid #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
+
+body { 
+    font-family: 'Montserrat', sans-serif; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 100vh; 
+    background-color: #f0f2f5; 
+    padding: 20px; 
     color: #333;
-    background: white;
 }
 
-/* Barra de progreso para el retorno */
-.progress-container {
-    width: 100%;
-    background-color: #eee;
-    border-radius: 10px;
-    margin-top: 15px;
-    display: none; /* Se activa al responder */
-}
-.progress-bar {
-    width: 0%; /* Empieza vacía */
-    height: 10px;
-    background-color: #27ae60; /* Color del progreso */
-    border-radius: 10px;
-    transition: width 5s linear; /* Esto hace que tarde exactamente 5 segundos */
+/* CONTENEDOR PRINCIPAL */
+.container { 
+    background: white; 
+    padding: 2.5rem; 
+    border-radius: 20px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+    text-align: center; 
+    width: 100%; 
+    max-width: 500px; 
 }
 
-/* Contenedor del cronómetro */
-.timer-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
+h1 { margin-bottom: 1.5rem; font-weight: 700; color: #2c3e50; }
+h2 { margin-bottom: 1.2rem; font-size: 1.3rem; line-height: 1.4; }
+
+/* INPUTS Y SELECTS */
+input, select, textarea { 
+    width: 100%; 
+    padding: 14px; 
+    margin-bottom: 12px; 
+    border-radius: 10px; 
+    border: 1px solid #ddd; 
+    font-family: 'Montserrat'; 
+    font-size: 1rem;
 }
 
-/* El círculo exterior que cambia de color */
+/* BOTONES GENERALES */
+button { 
+    padding: 15px; 
+    font-size: 1rem; 
+    font-family: 'Montserrat'; 
+    font-weight: 600; 
+    border: none; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+    width: 100%; 
+    margin-top: 8px; 
+    display: block;
+}
+
+button:active { transform: scale(0.98); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* COLORES DE CATEGORÍAS */
+.btn-rojo { background-color: #ff5f5f; color: white; }
+.btn-verde { background-color: #27ae60; color: white; }
+.btn-amarillo { background-color: #f1c40f; color: #333; }
+.btn-morado { background-color: #a569bd; color: white; }
+.btn-menta { background-color: #48c9b0; color: white; }
+.btn-volver { background-color: #bdc3c7; color: white; margin-top: 25px; font-size: 0.9rem; }
+
+/* TEMPORIZADOR CIRCULAR */
+.timer-container { 
+    display: flex; 
+    justify-content: center; 
+    margin-bottom: 25px; 
+}
+
 .timer-circle {
-    width: 80px;
-    height: 80px;
+    width: 85px; 
+    height: 85px; 
     border-radius: 50%;
-    display: flex;
-    align-items: center;
+    display: flex; 
+    align-items: center; 
     justify-content: center;
-    /* El fondo se actualizará por JavaScript (conic-gradient) */
-    background: conic-gradient(#27ae60 0deg, #ddd 0deg); 
+    background: conic-gradient(#27ae60 0deg, #eee 0deg);
     position: relative;
     transition: background 0.3s ease;
 }
 
-/* El círculo interior blanco para que parezca un anillo */
 .timer-circle::before {
-    content: "";
-    position: absolute;
-    width: 65px;
-    height: 65px;
-    background: white;
+    content: ""; 
+    position: absolute; 
+    width: 70px; 
+    height: 70px;
+    background: white; 
     border-radius: 50%;
 }
 
-/* El texto del número (encima de todo) */
-.timer-text {
-    position: relative;
-    z-index: 10;
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #333;
+.timer-text { 
+    position: relative; 
+    z-index: 10; 
+    font-weight: 700; 
+    font-size: 1.6rem; 
 }
 
-/* Caja de definición mejorada */
+/* CAJA DE DEFINICIÓN */
 .definicion-box {
-    background: #fdfefe;
-    padding: 20px;
-    border-radius: 12px;
-    border: 2px solid #eee;
+    background: #f8f9fa; 
+    padding: 20px; 
+    border-radius: 15px;
+    border: 2px solid #eee; 
+    margin-bottom: 20px; 
+    font-size: 1.1rem;
     line-height: 1.6;
-    margin-bottom: 20px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    text-align: left;
 }
+
+/* BARRA DE RETORNO (5 SEGUNDOS) */
+.progress-container { 
+    margin-top: 30px; 
+    display: none; 
+    background: #fdfefe;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.p-bar-bg { 
+    width: 100%; 
+    background: #eee; 
+    height: 12px; 
+    border-radius: 10px; 
+    overflow: hidden; 
+}
+
+.progress-bar {
+    width: 100%; /* Empieza llena */
+    height: 100%; 
+    background: #34495e;
+    border-radius: 10px;
+    transition: width 5s linear; /* La animación dura exactamente 5 segundos */
+}
+
+/* RESPONSIVE (MÓVIL) */
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    
+    h1 { font-size: 1.5rem; }
+    
+    button {
+        padding: 18px;
+        font-size: 1.1rem;
+    }
+
+    .timer-circle {
+        width: 75px;
+        height: 75px;
+    }
+}
+
+/* ESTILOS EXTRA PARA EL ADMIN */
+.card { 
+    border: 1px solid #eee; 
+    padding: 15px; 
+    border-radius: 12px; 
+    margin-bottom: 12px; 
+    text-align: left; 
+    background: #fff;
+}
+
+.btn-del { 
+    background: #ff5f5f; 
+    color: white; 
+    padding: 5px 12px; 
+    width: auto; 
+    display: inline-block; 
+    font-size: 0.8rem;
+    float: right;
+}
+
+.hidden { display: none; }
