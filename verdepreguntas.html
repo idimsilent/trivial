@@ -57,7 +57,7 @@
                 const grados = ((60 - tiempoRestante) / 60) * 360;
                 let color = (tiempoRestante > 30) ? "#27ae60" : (tiempoRestante > 15) ? "#f1c40f" : "#e74c3c";
                 circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eee ${grados}deg)`;
-                if (tiempoRestante <= 0) finalizarJuego("fallo", `⏰ ¡TIEMPO! Pierdes el quesito ${COLOR_NOMBRE}`);
+                if (tiempoRestante <= 0) finalizarJuego("fallo", `⏰ ¡TIEMPO! Ha fallado ${COLOR_NOMBRE}`);
             }, 1000);
         }
 
@@ -104,3 +104,4 @@
     </script>
 </body>
 </html>
+
