@@ -4,178 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin Pro 👑</title>
-    <link rel="stylesheet" href="estilos.css?v=4.0">
+    <link rel="stylesheet" href="estilos.css?v=4.1">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; }
-        .admin-wrapper { max-width: 500px; margin: 30px auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .category-row { 
-            display: flex; align-items: center; gap: 10px; margin-bottom: 15px; 
-        }
-        /* Botón principal de categoría */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .admin-wrapper { max-width: 700px; margin: 0 auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        
+        /* Filas de categorías */
+        .category-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .btn-main { 
             flex-grow: 1; padding: 15px; border: none; border-radius: 12px; 
             color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem;
-            transition: transform 0.2s;
+            transition: all 0.2s; text-transform: uppercase;
         }
-        .btn-main:hover { transform: translateY(-2px); opacity: 0.9; }
-        
-        /* Botón del lápiz */
+        .btn-main:hover { opacity: 0.9; transform: scale(1.01); }
         .btn-edit { 
-            background: #dfe6e9; border: none; width: 45px; height: 45px; 
-            border-radius: 10px; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; font-size: 1.2rem;
+            background: #dfe6e9; border: none; width: 45px; height: 50px; 
+            border-radius: 10px; cursor: pointer; font-size: 1.2rem;
         }
-        .btn-edit:hover { background: #b2bec3; }
 
-        /* Modal o mini-formulario de edición (oculto por defecto) */
+        /* Formulario de edición de nombre/color */
         .edit-form { 
-            display: none; background: #f9f9f9; padding: 15px; 
-            border-radius: 10px; margin-bottom: 15px; border: 1px dashed #ccc;
+            display: none; background: #fdfdfd; padding: 15px; border-radius: 10px; 
+            margin-bottom: 20px; border: 1px dashed #bbb; align-items: center; gap: 10px;
         }
-        .edit-form.active { display: block; }
-        .edit-form input[type="text"] { padding: 8px; width: 60%; border: 1px solid #ddd; border-radius: 5px; }
-        .edit-form input[type="color"] { vertical-align: middle; cursor: pointer; }
-        .btn-done { background: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
+        .edit-form.active { display: flex; }
+
+        /* Sección de Gestión de Preguntas (Lo que tenías antes) */
+        #seccion-preguntas { 
+            margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee; display: none; 
+        }
+        .pregunta-card { 
+            background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; 
+            border-left: 5px solid #333; position: relative;
+        }
+        .btn-borrar { background: #ff7675; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; float: right; }
+        
+        .form-nueva-p { background: #f1f2f6; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .btn-add { background: #2ecc71; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="admin-wrapper">
-        <h1 style="text-align:center;">Panel Admin 👑</h1>
-        <p style="text-align:center; color: #666;">Toca el color para preguntas o el ✏️ para editar</p>
 
-        <div id="categorias-container">
-            <div class="category-group">
-                <div class="category-row">
-                    <button id="btn-rojo" class="btn-main" onclick="gestionarPreguntas('rojo')">Cargando...</button>
-                    <button class="btn-edit" onclick="toggleEdit('rojo')">✏️</button>
-                </div>
-                <div id="form-rojo" class="edit-form">
-                    <input type="text" id="input-rojo" placeholder="Nuevo nombre">
-                    <input type="color" id="color-rojo">
-                    <button class="btn-done" onclick="guardarCambios('rojo')">OK</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-row">
-                    <button id="btn-verde" class="btn-main" onclick="gestionarPreguntas('verde')">Cargando...</button>
-                    <button class="btn-edit" onclick="toggleEdit('verde')">✏️</button>
-                </div>
-                <div id="form-verde" class="edit-form">
-                    <input type="text" id="input-verde">
-                    <input type="color" id="color-verde">
-                    <button class="btn-done" onclick="guardarCambios('verde')">OK</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-row">
-                    <button id="btn-amarillo" class="btn-main" onclick="gestionarPreguntas('amarillo')">Cargando...</button>
-                    <button class="btn-edit" onclick="toggleEdit('amarillo')">✏️</button>
-                </div>
-                <div id="form-amarillo" class="edit-form">
-                    <input type="text" id="input-amarillo">
-                    <input type="color" id="color-amarillo">
-                    <button class="btn-done" onclick="guardarCambios('amarillo')">OK</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-row">
-                    <button id="btn-morado" class="btn-main" onclick="gestionarPreguntas('morado')">Cargando...</button>
-                    <button class="btn-edit" onclick="toggleEdit('morado')">✏️</button>
-                </div>
-                <div id="form-morado" class="edit-form">
-                    <input type="text" id="input-morado">
-                    <input type="color" id="color-morado">
-                    <button class="btn-done" onclick="guardarCambios('morado')">OK</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-row">
-                    <button id="btn-menta" class="btn-main" onclick="gestionarPreguntas('menta')">Cargando...</button>
-                    <button class="btn-edit" onclick="toggleEdit('menta')">✏️</button>
-                </div>
-                <div id="form-menta" class="edit-form">
-                    <input type="text" id="input-menta">
-                    <input type="color" id="color-menta">
-                    <button class="btn-done" onclick="guardarCambios('menta')">OK</button>
-                </div>
-            </div>
+<div class="admin-wrapper">
+    <h1 style="text-align:center;">Panel Admin 👑</h1>
+    
+    <div id="categorias-menu">
         </div>
 
-        <button onclick="cerrarSesion()" style="width:100%; margin-top:20px; padding:12px; border-radius:10px; border:none; background:#b2bec3; color:white; font-weight:bold; cursor:pointer;">Cerrar Sesión</button>
+    <div id="seccion-preguntas">
+        <h2 id="titulo-gestion">Gestionando: <span id="nombre-cat-actual">...</span></h2>
+        
+        <div class="form-nueva-p">
+            <h3>Añadir Nueva Pregunta</h3>
+            <textarea id="nueva-p" placeholder="Enunciado de la pregunta"></textarea>
+            <select id="tipo-p" onchange="cambiarTipo()">
+                <option value="test">Tipo Test (4 opciones)</option>
+                <option value="definicion">Definición (Botón aceptar/fallar)</option>
+            </select>
+            
+            <div id="campos-test">
+                <input type="text" id="r1" placeholder="Opción A">
+                <input type="text" id="r2" placeholder="Opción B">
+                <input type="text" id="r3" placeholder="Opción C">
+                <input type="text" id="r4" placeholder="Opción D">
+                <input type="text" id="r-correcta" placeholder="Escribe la respuesta exacta correcta">
+            </div>
+
+            <div id="campos-def" style="display:none;">
+                <textarea id="definicion-texto" placeholder="Escribe aquí la respuesta correcta o definición"></textarea>
+            </div>
+
+            <button class="btn-add" onclick="subirPregunta()">AÑADIR PREGUNTA</button>
+        </div>
+
+        <div id="lista-preguntas">
+            </div>
     </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, get, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = { 
-            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
-            authDomain: "trivial-clase.firebaseapp.com", 
-            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app", 
-            projectId: "trivial-clase", 
-            storageBucket: "trivial-clase.firebasestorage.app", 
-            messagingSenderId: "692832052784", 
-            appId: "1:692832052784:web:72f9568beaf847a706aff5" 
-        };
+    const firebaseConfig = { 
+        apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
+        authDomain: "trivial-clase.firebaseapp.com", 
+        databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app", 
+        projectId: "trivial-clase", 
+        storageBucket: "trivial-clase.firebasestorage.app", 
+        messagingSenderId: "692832052784", 
+        appId: "1:692832052784:web:72f9568beaf847a706aff5" 
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const categorias = ['rojo', 'verde', 'amarillo', 'morado', 'menta'];
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const categorias = ['rojo', 'verde', 'amarillo', 'morado', 'menta'];
+    let categoriaSeleccionada = "";
 
-        // 1. CARGAR CONFIGURACIÓN INICIAL
-        async function cargarConfig() {
-            const snapshot = await get(ref(db, 'configuracion'));
-            const config = snapshot.exists() ? snapshot.val() : {};
+    // 1. CARGAR CONFIGURACIÓN DE BOTONES
+    async function cargarBotones() {
+        const menu = document.getElementById('categorias-menu');
+        menu.innerHTML = "";
+        const snap = await get(ref(db, 'configuracion'));
+        const config = snap.exists() ? snap.val() : {};
 
-            categorias.forEach(cat => {
-                const btn = document.getElementById(`btn-${cat}`);
-                const data = config[cat] || { nombre: cat.toUpperCase(), color: '#636e72' };
-                
-                btn.innerText = data.nombre;
-                btn.style.backgroundColor = data.color;
-                
-                // Rellenar inputs del formulario de edición
-                document.getElementById(`input-${cat}`).value = data.nombre;
-                document.getElementById(`color-${cat}`).value = data.color;
+        categorias.forEach(cat => {
+            const data = config[cat] || { nombre: cat, color: '#636e72' };
+            const container = document.createElement('div');
+            container.innerHTML = `
+                <div class="category-row">
+                    <button class="btn-main" style="background:${data.color}" onclick="abrirGestion('${cat}', '${data.nombre}')">${data.nombre}</button>
+                    <button class="btn-edit" onclick="toggleEditForm('${cat}')">✏️</button>
+                </div>
+                <div id="edit-${cat}" class="edit-form">
+                    <input type="text" id="input-n-${cat}" value="${data.nombre}">
+                    <input type="color" id="input-c-${cat}" value="${data.color}">
+                    <button class="btn-done" style="background:#27ae60; color:white; border:none; padding:10px; border-radius:5px;" onclick="guardarConfig('${cat}')">OK</button>
+                </div>
+            `;
+            menu.appendChild(container);
+        });
+    }
+
+    // 2. EDITAR NOMBRE Y COLOR
+    window.toggleEditForm = (cat) => document.getElementById(`edit-${cat}`).classList.toggle('active');
+    
+    window.guardarConfig = (cat) => {
+        const n = document.getElementById(`input-n-${cat}`).value;
+        const c = document.getElementById(`input-c-${cat}`).value;
+        set(ref(db, 'configuracion/' + cat), { nombre: n, color: c }).then(() => location.reload());
+    };
+
+    // 3. GESTIÓN DE PREGUNTAS (TU LÓGICA DE ANTES)
+    window.abrirGestion = (cat, nombre) => {
+        categoriaSeleccionada = cat;
+        document.getElementById('seccion-preguntas').style.display = 'block';
+        document.getElementById('nombre-cat-actual').innerText = nombre.toUpperCase();
+        window.scrollTo(0, document.body.scrollHeight);
+        cargarPreguntas();
+    };
+
+    window.cambiarTipo = () => {
+        const tipo = document.getElementById('tipo-p').value;
+        document.getElementById('campos-test').style.display = tipo === 'test' ? 'block' : 'none';
+        document.getElementById('campos-def').style.display = tipo === 'definicion' ? 'block' : 'none';
+    };
+
+    async function cargarPreguntas() {
+        const lista = document.getElementById('lista-preguntas');
+        lista.innerHTML = "Cargando preguntas...";
+        const snap = await get(ref(db, 'preguntas/' + categoriaSeleccionada));
+        lista.innerHTML = "";
+        if (snap.exists()) {
+            Object.entries(snap.val()).forEach(([id, p]) => {
+                const div = document.createElement('div');
+                div.className = 'pregunta-card';
+                div.innerHTML = `<button class="btn-borrar" onclick="borrarP('${id}')">Borrar</button>
+                                 <strong>P:</strong> ${p.p}<br>
+                                 <small>${p.tipo === 'test' ? 'Correcta: ' + p.correcta : 'Def: ' + p.definicion}</small>`;
+                lista.appendChild(div);
             });
         }
+    }
 
-        // 2. MOSTRAR/OCULTAR EDICIÓN
-        window.toggleEdit = (cat) => {
-            const form = document.getElementById(`form-${cat}`);
-            form.classList.toggle('active');
-        };
+    window.subirPregunta = () => {
+        const p = document.getElementById('nueva-p').value;
+        const tipo = document.getElementById('tipo-p').value;
+        let datos = { p, tipo };
 
-        // 3. GUARDAR CAMBIOS DE NOMBRE/COLOR
-        window.guardarCambios = (cat) => {
-            const nuevoNombre = document.getElementById(`input-${cat}`).value;
-            const nuevoColor = document.getElementById(`color-${cat}`).value;
+        if (tipo === 'test') {
+            datos.r = [document.getElementById('r1').value, document.getElementById('r2').value, document.getElementById('r3').value, document.getElementById('r4').value];
+            datos.correcta = document.getElementById('r-correcta').value;
+        } else {
+            datos.definicion = document.getElementById('definicion-texto').value;
+        }
 
-            set(ref(db, 'configuracion/' + cat), {
-                nombre: nuevoNombre,
-                color: nuevoColor
-            }).then(() => {
-                alert("Actualizado correctamente");
-                location.reload();
-            });
-        };
+        push(ref(db, 'preguntas/' + categoriaSeleccionada), datos).then(() => {
+            alert("Pregunta añadida");
+            cargarPreguntas();
+        });
+    };
 
-        // 4. GESTIONAR PREGUNTAS (Funcionalidad que ya tenías)
-        window.gestionarPreguntas = (cat) => {
-            // Aquí pones el código que ya tenías para abrir la lista de preguntas de ese color
-            // Por ejemplo: location.href = `gestionpreguntas.html?color=${cat}`;
-            alert("Aquí se abriría tu gestor de preguntas para el color: " + cat);
-        };
+    window.borrarP = (id) => {
+        if(confirm("¿Seguro que quieres borrarla?")) {
+            remove(ref(db, `preguntas/${categoriaSeleccionada}/${id}`)).then(() => cargarPreguntas());
+        }
+    };
 
-        window.cerrarSesion = () => {
-            location.href = 'index.html';
-        };
+    cargarBotones();
+</script>
 
-        cargarConfig();
-    </script>
 </body>
 </html>
