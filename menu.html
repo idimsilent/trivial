@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=4.3">
     <title>Trivial de Clase - Menú</title>
+    <link rel="stylesheet" href="estilos.css?v=5.0">
     <style>
-        /* SOLUCIÓN LETRAS BLANCAS: Forzamos el color en todos los botones de categoría */
-        .opciones-container button {
+        .container { max-width: 500px; margin: 0 auto; text-align: center; padding: 20px; }
+        .opciones-container { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        
+        /* Botones dinámicos */
+        .btn-menu {
+            padding: 20px;
+            border: none;
+            border-radius: 18px;
             color: white !important;
+            font-size: 1.2rem;
             font-weight: bold;
             text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
+        .btn-menu:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Elige una categoría</h1>
         <div class="opciones-container" id="contenedor-botones">
-            <button id="btn-rojo" onclick="location.href='rojopreguntas.html'">Cargando...</button>
-            <button id="btn-verde" onclick="location.href='verdepreguntas.html'">Cargando...</button>
-            <button id="btn-amarillo" onclick="location.href='amarillopreguntas.html'">Cargando...</button>
-            <button id="btn-morado" onclick="location.href='moradopreguntas.html'">Cargando...</button>
-            <button id="btn-menta" onclick="location.href='mentapreguntas.html'">Cargando...</button>
+            <p>Cargando categorías...</p>
         </div>
     </div>
 
@@ -42,22 +49,32 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const categorias = ['rojo', 'verde', 'amarillo', 'morado', 'menta'];
 
-        get(ref(db, 'configuracion')).then((snapshot) => {
-            if (snapshot.exists()) {
-                const config = snapshot.val();
-                categorias.forEach(cat => {
-                    const btn = document.getElementById(`btn-${cat}`);
-                    if (config[cat]) {
-                        btn.innerText = config[cat].nombre;
-                        btn.style.backgroundColor = config[cat].color;
-                        btn.style.borderColor = config[cat].color;
-                        btn.style.color = "white"; // Refuerzo extra por JS
-                    }
+        async function cargarCategorias() {
+            const cont = document.getElementById('contenedor-botones');
+            const snap = await get(ref(db, 'configuracion'));
+            
+            if (snap.exists()) {
+                cont.innerHTML = "";
+                Object.entries(snap.val()).forEach(([id, data]) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-menu';
+                    btn.innerText = data.nombre;
+                    btn.style.backgroundColor = data.color;
+                    
+                    // Al hacer clic, enviamos el ID y el Color a juego.html
+                    btn.onclick = () => {
+                        location.href = `juego.html?id=${id}&color=${encodeURIComponent(data.color)}`;
+                    };
+                    
+                    cont.appendChild(btn);
                 });
+            } else {
+                cont.innerHTML = "<p>No hay categorías creadas.</p>";
             }
-        });
+        }
+
+        cargarCategorias();
     </script>
 </body>
 </html>
