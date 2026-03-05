@@ -3,19 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=1.4">
+    <link rel="stylesheet" href="estilos.css?v=3.1">
+    <title>Trivial de Clase - Menú</title>
 </head>
 <body>
     <div class="container">
-        <h1>Elige Categoría</h1>
-        <div class="opciones-container">
-            <button class="btn-rojo" onclick="location.href='rojopreguntas.html'">🔴 Geografía</button>
-            <button class="btn-verde" onclick="location.href='verdepreguntas.html'">🟢 Arte</button>
-            <button class="btn-amarillo" onclick="location.href='amarillopreguntas.html'">🟡 Deportes</button>
-            <button class="btn-morado" onclick="location.href='moradopreguntas.html'">🟣 Ciencia</button>
-            <button class="btn-menta" onclick="location.href='mentapreguntas.html'">🟢 Entretenimiento</button>
+        <h1>Elige una categoría</h1>
+        <div class="opciones-container" id="contenedor-botones">
+            <button id="btn-rojo" onclick="location.href='rojopreguntas.html'" class="btn-rojo">Cargando...</button>
+            <button id="btn-verde" onclick="location.href='verdepreguntas.html'" class="btn-verde">Cargando...</button>
+            <button id="btn-amarillo" onclick="location.href='amarillopreguntas.html'" class="btn-amarillo">Cargando...</button>
+            <button id="btn-morado" onclick="location.href='moradopreguntas.html'" class="btn-morado">Cargando...</button>
+            <button id="btn-menta" onclick="location.href='mentapreguntas.html'" class="btn-menta">Cargando...</button>
         </div>
-        <button class="btn-volver" onclick="location.href='index.html'">Cerrar Sesión</button>
     </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
+            authDomain: "trivial-clase.firebaseapp.com", 
+            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app", 
+            projectId: "trivial-clase", 
+            storageBucket: "trivial-clase.firebasestorage.app", 
+            messagingSenderId: "692832052784", 
+            appId: "1:692832052784:web:72f9568beaf847a706aff5" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const categorias = ['rojo', 'verde', 'amarillo', 'morado', 'menta'];
+
+        // Función para aplicar la configuración de Claudia
+        get(ref(db, 'configuracion')).then((snapshot) => {
+            if (snapshot.exists()) {
+                const config = snapshot.val();
+                categorias.forEach(cat => {
+                    const btn = document.getElementById(`btn-${cat}`);
+                    if (config[cat]) {
+                        btn.innerText = config[cat].nombre;
+                        btn.style.backgroundColor = config[cat].color;
+                        btn.style.borderColor = config[cat].color; 
+                        // Sombra del color para efecto 3D si tu CSS lo usa
+                        btn.style.boxShadow = `0 6px 0 ${config[cat].color}88`; 
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
