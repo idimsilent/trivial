@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=1.8">
+    <link rel="stylesheet" href="estilos.css?v=1.9">
+    <title>Categoría Roja - Geografía</title>
 </head>
 <body>
     <div class="container">
         <div class="timer-container">
-            <div id="timer" class="timer-circle">60</div>
+            <div id="timerCircle" class="timer-circle">
+                <span id="timerNum" class="timer-text">60</span>
+            </div>
         </div>
 
-        <h2 id="txtP">Conectando...</h2>
-        <div id="contenido" class="opciones-container"></div>
-        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.3rem; text-transform: uppercase;"></div>
+        <h2 id="txtP">Conectando con la nube...</h2>
+        
+        <div id="contenido" class="opciones-container">
+            </div>
+
+        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.2rem; text-transform: uppercase;"></div>
         
         <div id="pContainer" class="progress-container">
-            <p id="txtVolviendo" style="font-size: 0.9rem; margin-bottom: 5px;">Volviendo al menú...</p>
-            <div id="pBar" class="progress-bar"></div>
+            <p id="txtVolviendo" style="font-size: 0.9rem; margin-bottom: 8px; color: #666;">Volviendo al menú en 5s...</p>
+            <div class="p-bar-bg">
+                <div id="pBar" class="progress-bar"></div>
+            </div>
         </div>
     </div>
 
@@ -25,6 +33,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // Configuración de tu Firebase
         const firebaseConfig = { 
             apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
             authDomain: "trivial-clase.firebaseapp.com", 
@@ -38,8 +47,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- CONFIGURACIÓN DE ESTA PÁGINA ---
-        const COLOR_NOMBRE = 'rojo'; // Cambiar a 'verde', 'amarillo', etc.
+        // --- AJUSTES DE ESTA CATEGORÍA ---
+        const COLOR_NOMBRE = 'rojo'; 
         const CLASE_BTN = 'btn-rojo';
 
         // --- SONIDOS ---
@@ -47,16 +56,31 @@
         const sonidoFallo = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c35278d327.mp3');
 
         let tiempoRestante = 60;
+        let totalTiempo = 60;
         let juegoTerminado = false;
         let intervaloCrono;
 
         function iniciarCrono() {
+            const circle = document.getElementById('timerCircle');
+            const text = document.getElementById('timerNum');
+
             intervaloCrono = setInterval(() => {
                 tiempoRestante--;
-                document.getElementById('timer').innerText = tiempoRestante;
-                if (tiempoRestante <= 10) document.getElementById('timer').style.color = "red";
+                text.innerText = tiempoRestante;
+
+                // Cálculo del ángulo para el círculo (se va llenando)
+                const grados = ((totalTiempo - tiempoRestante) / totalTiempo) * 360;
+                
+                // Cambio de color dinámico
+                let color = "#27ae60"; // Verde
+                if (tiempoRestante <= 30) color = "#f1c40f"; // Amarillo
+                if (tiempoRestante <= 15) color = "#e67e22"; // Naranja
+                if (tiempoRestante <= 7)  color = "#e74c3c"; // Rojo
+                
+                circle.style.background = `conic-gradient(${color} ${grados}deg, #eee ${grados}deg)`;
+
                 if (tiempoRestante <= 0) {
-                    finalizarJuego("fallo", `⏰ ¡Tiempo agotado! Has perdido el quesito ${COLOR_NOMBRE}`);
+                    finalizarJuego("fallo", `⏰ ¡TIEMPO! Has perdido el quesito ${COLOR_NOMBRE}`);
                 }
             }, 1000);
         }
@@ -77,25 +101,26 @@
                 sonidoFallo.play();
             }
 
-            // Bloquear clics en botones
+            // Bloquear interacción
             document.getElementById('contenido').style.pointerEvents = "none";
 
-            // Barra de progreso 5s
-            const pContainer = document.getElementById('pContainer');
+            // Mostrar barra de progreso de 5 segundos
+            document.getElementById('pContainer').style.display = "block";
             const pBar = document.getElementById('pBar');
-            pContainer.style.display = "block";
             
-            // Animación de la barra
-            pBar.style.width = "100%";
+            // Iniciamos la animación de la barra (de 100% a 0%)
             setTimeout(() => { pBar.style.width = "0%"; }, 100);
 
+            // Redirigir al menú en 5s
             setTimeout(() => { location.href = 'menu.html'; }, 5000);
         }
 
+        // Cargar pregunta de Firebase
         get(ref(db, 'preguntas/' + COLOR_NOMBRE)).then((snapshot) => {
             if (snapshot.exists()) {
                 const preguntas = Object.values(snapshot.val());
                 const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
+                
                 document.getElementById('txtP').innerText = azar.p;
                 const cont = document.getElementById('contenido');
 
@@ -104,28 +129,32 @@
                 if(azar.tipo === 'test') {
                     azar.r.forEach(res => {
                         const b = document.createElement('button');
-                        b.innerText = res; b.className = CLASE_BTN;
+                        b.innerText = res; 
+                        b.className = CLASE_BTN;
                         b.onclick = () => {
                             if(res === azar.correcta) {
-                                finalizarJuego("acierto", `✨ ¡Enhorabuena! Has conseguido el quesito ${COLOR_NOMBRE}`);
+                                finalizarJuego("acierto", `✨ ¡GENIAL! Has ganado el quesito ${COLOR_NOMBRE}`);
                             } else {
-                                finalizarJuego("fallo", `❌ ¡Fallo! Has perdido el quesito ${COLOR_NOMBRE}. Era: ${azar.correcta}`);
+                                finalizarJuego("fallo", `❌ ¡FALLO! Pierdes el quesito ${COLOR_NOMBRE}. Era: ${azar.correcta}`);
                             }
                         };
                         cont.appendChild(b);
                     });
                 } else {
                     // TIPO DEFINICIÓN
-                    const pDef = document.createElement('p');
+                    const pDef = document.createElement('div');
                     pDef.innerText = azar.definicion;
-                    pDef.className = "definicion-box"; // Añade estilo en CSS
+                    pDef.className = "definicion-box";
                     cont.appendChild(pDef);
                     
                     const bOK = document.createElement('button');
-                    bOK.innerText = "¡Entendido!"; bOK.className = CLASE_BTN;
-                    bOK.onclick = () => finalizarJuego("acierto", `📖 Definición leída. ¡Quesito ${COLOR_NOMBRE} para ti!`);
+                    bOK.innerText = "¡Lo tengo!"; 
+                    bOK.className = CLASE_BTN;
+                    bOK.onclick = () => finalizarJuego("acierto", `📖 ¡Bien! Quesito ${COLOR_NOMBRE} conseguido.`);
                     cont.appendChild(bOK);
                 }
+            } else {
+                document.getElementById('txtP').innerText = "No hay preguntas en esta categoría.";
             }
         });
     </script>
