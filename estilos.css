@@ -49,9 +49,9 @@ button { padding: 12px; font-size: 0.95rem; font-family: 'Montserrat'; font-weig
     display: none; /* Se activa al responder */
 }
 .progress-bar {
-    width: 100%;
+    width: 0%; /* Empieza vacía */
     height: 10px;
-    background-color: #a569bd;
+    background-color: #27ae60; /* Color del progreso */
     border-radius: 10px;
-    transition: width 5s linear;
+    transition: width 5s linear; /* Esto hace que tarde exactamente 5 segundos */
 }
