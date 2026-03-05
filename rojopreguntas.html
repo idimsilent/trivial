@@ -4,71 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="estilos.css?v=1.6">
+    <title>Geografía</title>
 </head>
 <body>
     <div class="container">
         <h2 id="txtP">Conectando...</h2>
         <div id="contenido" class="opciones-container"></div>
-        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px;"></div>
+        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px; font-size:1.2rem;"></div>
         <button class="btn-volver" onclick="location.href='menu.html'">Volver</button>
     </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4",
-            authDomain: "trivial-clase.firebaseapp.com",
-            databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "trivial-clase",
-            storageBucket: "trivial-clase.firebasestorage.app",
-            messagingSenderId: "692832052784",
-            appId: "1:692832052784:web:72f9568beaf847a706aff5"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", authDomain: "trivial-clase.firebaseapp.com", databaseURL: "https://trivial-clase-default-rtdb.europe-west1.firebasedatabase.app", projectId: "trivial-clase", storageBucket: "trivial-clase.firebasestorage.app", messagingSenderId: "692832052784", appId: "1:692832052784:web:72f9568beaf847a706aff5" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- CAMBIA EL COLOR AQUÍ: 'rojo', 'verde', etc. ---
-        const colorCale = 'rojo'; 
-        const claseBtn = 'btn-rojo';
-
-        get(ref(db, 'preguntas/' + colorCale)).then((snapshot) => {
+        get(ref(db, 'preguntas/rojo')).then((snapshot) => {
             if (snapshot.exists()) {
                 const preguntas = Object.values(snapshot.val());
                 const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
-                
                 document.getElementById('txtP').innerText = azar.p;
                 const cont = document.getElementById('contenido');
-
                 if(azar.tipo === 'test') {
                     azar.r.forEach(res => {
                         const b = document.createElement('button');
-                        b.innerText = res; b.className = claseBtn;
+                        b.innerText = res; b.className = "btn-rojo";
                         b.onclick = () => {
-                            if(res === azar.correcta) {
-                                document.getElementById('feedback').innerText = "✅ ¡CORRECTO!";
-                                document.getElementById('feedback').style.color = "green";
-                            } else {
-                                document.getElementById('feedback').innerText = "❌ FALLASTE. Era: " + azar.correcta;
-                                document.getElementById('feedback').style.color = "red";
-                            }
+                            if(res === azar.correcta) { document.getElementById('feedback').innerText = "✅ ¡CORRECTO!"; document.getElementById('feedback').style.color = "green"; }
+                            else { document.getElementById('feedback').innerText = "❌ ERROR. Era: " + azar.correcta; document.getElementById('feedback').style.color = "red"; }
                         };
                         cont.appendChild(b);
                     });
                 } else {
-                    // TIPO DEFINICIÓN
-                    const pDef = document.createElement('p');
-                    pDef.innerText = azar.definicion;
-                    pDef.style.background = "#f0f0f0";
-                    pDef.style.padding = "15px";
-                    pDef.style.borderRadius = "10px";
+                    const pDef = document.createElement('p'); pDef.innerText = azar.definicion;
+                    pDef.style.background = "#f9f9f9"; pDef.style.padding = "20px"; pDef.style.borderRadius = "10px"; pDef.style.border = "2px dashed #ff5f5f";
                     cont.appendChild(pDef);
                 }
-            } else {
-                document.getElementById('txtP').innerText = "Sin preguntas aún.";
-            }
+            } else { document.getElementById('txtP').innerText = "Claudia no ha puesto preguntas aún."; }
         });
     </script>
 </body>
