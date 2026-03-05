@@ -65,7 +65,7 @@
                 circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eee ${grados}deg)`;
 
                 if (tiempoRestante <= 0) {
-                    finalizarJuego("fallo", `⏰ ¡TIEMPO! Has perdido el quesito ${COLOR_NOMBRE}`);
+                    finalizarJuego("fallo", `⏰ ¡TIEMPO! Ha fallado ${COLOR_NOMBRE}`);
                 }
             }, 1000);
         }
@@ -110,9 +110,9 @@
                         b.className = CLASE_BTN;
                         b.onclick = () => {
                             if(res === azar.correcta) {
-                                finalizarJuego("acierto", `✨ ¡HAS GANADO EL QUESITO ${COLOR_NOMBRE.toUpperCase()}!`);
+                                finalizarJuego("acierto", `✨ ¡HA ACERTADO ${COLOR_NOMBRE.toUpperCase()}!`);
                             } else {
-                                finalizarJuego("fallo", `❌ HAS PERDIDO EL QUESITO ${COLOR_NOMBRE.toUpperCase()}`);
+                                finalizarJuego("fallo", `❌ HA FALLADO ${COLOR_NOMBRE.toUpperCase()}`);
                             }
                         };
                         cont.appendChild(b);
