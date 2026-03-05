@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=3.0">
-    <title>Trivial - Rojo</title>
+    <link rel="stylesheet" href="estilos.css?v=4.3">
+    <title>Trivial - Juego</title>
+    <style>
+        /* Asegurar texto blanco en botones de respuesta */
+        .opciones-container button, .btn-verde, .btn-rojo { color: white !important; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,11 +17,9 @@
                 <span id="timerNum" class="timer-text">60</span>
             </div>
         </div>
-
         <h2 id="txtP">Cargando pregunta...</h2>
         <div id="contenido" class="opciones-container"></div>
-        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.2rem; text-transform: uppercase;"></div>
-        
+        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.5rem; text-transform: uppercase;"></div>
         <div id="pContainer" class="progress-container">
             <div class="p-bar-bg"><div id="pBar" class="progress-bar"></div></div>
         </div>
@@ -40,10 +42,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- CAMBIAR ESTO SEGÚN EL COLOR DEL ARCHIVO ---
         const COLOR_NOMBRE = 'rojo'; 
         const CLASE_BTN = 'btn-rojo';
 
-        // --- CONFIGURACIÓN DE SONIDOS ---
         const sonidoAcierto = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'); 
         const sonidoFallo = new Audio('https://cdn.pixabay.com/audio/2025/11/15/audio_721173197e.mp3');
 
@@ -54,18 +56,16 @@
         function iniciarCrono() {
             const circle = document.getElementById('timerCircle');
             const text = document.getElementById('timerNum');
-
             intervaloCrono = setInterval(() => {
                 if (juegoTerminado) return;
                 tiempoRestante--;
                 text.innerText = tiempoRestante;
-
                 const grados = ((60 - tiempoRestante) / 60) * 360;
                 let color = (tiempoRestante > 30) ? "#27ae60" : (tiempoRestante > 15) ? "#f1c40f" : "#e74c3c";
                 circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eee ${grados}deg)`;
 
                 if (tiempoRestante <= 0) {
-                    finalizarJuego("fallo", `⏰ ¡TIEMPO! Ha fallado ${COLOR_NOMBRE}`);
+                    finalizarJuego("fallo", "⏰ ¡TIEMPO! Ha fallado.");
                 }
             }, 1000);
         }
@@ -74,23 +74,21 @@
             if (juegoTerminado) return;
             juegoTerminado = true;
             clearInterval(intervaloCrono);
-
             const f = document.getElementById('feedback');
-            f.innerText = mensaje;
             
             if (resultado === "acierto") {
+                f.innerText = "✨ ¡HA ACERTADO!";
                 f.style.color = "#27ae60";
-                sonidoAcierto.play().catch(e => console.log("Audio bloqueado por el navegador"));
+                sonidoAcierto.play().catch(() => {});
             } else {
+                f.innerText = mensaje || "❌ HA FALLADO.";
                 f.style.color = "#e74c3c";
-                sonidoFallo.play().catch(e => console.log("Audio bloqueado por el navegador"));
+                sonidoFallo.play().catch(() => {});
             }
 
             document.getElementById('contenido').style.pointerEvents = "none";
             document.getElementById('pContainer').style.display = "block";
-            const pBar = document.getElementById('pBar');
-            
-            setTimeout(() => { pBar.style.width = "0%"; }, 100);
+            setTimeout(() => { document.getElementById('pBar').style.width = "0%"; }, 100);
             setTimeout(() => { location.href = 'menu.html'; }, 5000);
         }
 
@@ -100,39 +98,27 @@
                 const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
                 document.getElementById('txtP').innerText = azar.p;
                 const cont = document.getElementById('contenido');
-
                 iniciarCrono();
 
                 if(azar.tipo === 'test') {
                     azar.r.forEach(res => {
                         const b = document.createElement('button');
-                        b.innerText = res; 
-                        b.className = CLASE_BTN;
-                        b.onclick = () => {
-                            if(res === azar.correcta) {
-                                finalizarJuego("acierto", `✨ ¡HA ACERTADO ${COLOR_NOMBRE.toUpperCase()}!`);
-                            } else {
-                                finalizarJuego("fallo", `❌ HA FALLADO ${COLOR_NOMBRE.toUpperCase()}`);
-                            }
-                        };
+                        b.innerText = res; b.className = CLASE_BTN;
+                        b.onclick = () => (res === azar.correcta) ? finalizarJuego("acierto") : finalizarJuego("fallo");
                         cont.appendChild(b);
                     });
                 } else {
                     const pDef = document.createElement('div');
-                    pDef.innerText = azar.definicion;
-                    pDef.className = "definicion-box";
+                    pDef.innerText = azar.definicion; pDef.className = "definicion-box";
                     cont.appendChild(pDef);
                     
                     const bAcierto = document.createElement('button');
-                    bAcierto.innerText = "¡He acertado! ✅"; 
-                    bAcierto.className = "btn-verde"; 
-                    bAcierto.style.marginBottom = "10px";
-                    bAcierto.onclick = () => finalizarJuego("acierto", `✨ ¡QUESITO ${COLOR_NOMBRE.toUpperCase()} CONSEGUIDO!`);
+                    bAcierto.innerText = "¡Ha acertado! ✅"; bAcierto.className = "btn-verde";
+                    bAcierto.onclick = () => finalizarJuego("acierto");
 
                     const bFallo = document.createElement('button');
-                    bFallo.innerText = "He fallado... ❌"; 
-                    bFallo.className = "btn-rojo"; 
-                    bFallo.onclick = () => finalizarJuego("fallo", `❌ PIERDES EL QUESITO ${COLOR_NOMBRE.toUpperCase()}`);
+                    bFallo.innerText = "Ha fallado... ❌"; bFallo.className = "btn-rojo";
+                    bFallo.onclick = () => finalizarJuego("fallo");
 
                     cont.appendChild(bAcierto);
                     cont.appendChild(bFallo);
