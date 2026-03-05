@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=1.9">
-    <title>Categoría Roja - Geografía</title>
+    <link rel="stylesheet" href="estilos.css?v=2.0">
+    <title>Trivial - Rojo</title>
 </head>
 <body>
     <div class="container">
@@ -14,15 +14,14 @@
             </div>
         </div>
 
-        <h2 id="txtP">Conectando con la nube...</h2>
+        <h2 id="txtP">Cargando pregunta...</h2>
         
-        <div id="contenido" class="opciones-container">
-            </div>
+        <div id="contenido" class="opciones-container"></div>
 
         <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.2rem; text-transform: uppercase;"></div>
         
         <div id="pContainer" class="progress-container">
-            <p id="txtVolviendo" style="font-size: 0.9rem; margin-bottom: 8px; color: #666;">Volviendo al menú en 5s...</p>
+            <p id="txtVolviendo" style="font-size: 0.9rem; margin-bottom: 8px; color: #666;">Volviendo al menú...</p>
             <div class="p-bar-bg">
                 <div id="pBar" class="progress-bar"></div>
             </div>
@@ -33,7 +32,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // Configuración de tu Firebase
         const firebaseConfig = { 
             apiKey: "AIzaSyAu9LYkHUOIq2q0VrtLbhe1-Jk6FepnVo4", 
             authDomain: "trivial-clase.firebaseapp.com", 
@@ -47,13 +45,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- AJUSTES DE ESTA CATEGORÍA ---
         const COLOR_NOMBRE = 'rojo'; 
         const CLASE_BTN = 'btn-rojo';
 
-        // --- SONIDOS ---
-        const sonidoAcierto = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'); 
-        const sonidoFallo = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c35278d327.mp3');
+        // Sonidos de sistema (Google)
+        const sonidoAcierto = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'); 
+        const sonidoFallo = new Audio('https://actions.google.com/sounds/v1/cartoon/boing.ogg');
 
         let tiempoRestante = 60;
         let totalTiempo = 60;
@@ -68,16 +65,15 @@
                 tiempoRestante--;
                 text.innerText = tiempoRestante;
 
-                // Cálculo del ángulo para el círculo (se va llenando)
                 const grados = ((totalTiempo - tiempoRestante) / totalTiempo) * 360;
                 
-                // Cambio de color dinámico
-                let color = "#27ae60"; // Verde
-                if (tiempoRestante <= 30) color = "#f1c40f"; // Amarillo
-                if (tiempoRestante <= 15) color = "#e67e22"; // Naranja
-                if (tiempoRestante <= 7)  color = "#e74c3c"; // Rojo
+                let color = "#27ae60"; 
+                if (tiempoRestante <= 30) color = "#f1c40f"; 
+                if (tiempoRestante <= 15) color = "#e67e22"; 
+                if (tiempoRestante <= 7)  color = "#e74c3c"; 
                 
-                circle.style.background = `conic-gradient(${color} ${grados}deg, #eee ${grados}deg)`;
+                // Forzamos el degradado en el background-image
+                circle.style.backgroundImage = `conic-gradient(${color} ${grados}deg, #eeeeee ${grados}deg)`;
 
                 if (tiempoRestante <= 0) {
                     finalizarJuego("fallo", `⏰ ¡TIEMPO! Has perdido el quesito ${COLOR_NOMBRE}`);
@@ -95,32 +91,24 @@
             
             if (resultado === "acierto") {
                 f.style.color = "#27ae60";
-                sonidoAcierto.play();
+                sonidoAcierto.play().catch(() => console.log("Audio esperando interacción"));
             } else {
                 f.style.color = "#e74c3c";
-                sonidoFallo.play();
+                sonidoFallo.play().catch(() => console.log("Audio esperando interacción"));
             }
 
-            // Bloquear interacción
             document.getElementById('contenido').style.pointerEvents = "none";
-
-            // Mostrar barra de progreso de 5 segundos
             document.getElementById('pContainer').style.display = "block";
             const pBar = document.getElementById('pBar');
             
-            // Iniciamos la animación de la barra (de 100% a 0%)
             setTimeout(() => { pBar.style.width = "0%"; }, 100);
-
-            // Redirigir al menú en 5s
             setTimeout(() => { location.href = 'menu.html'; }, 5000);
         }
 
-        // Cargar pregunta de Firebase
         get(ref(db, 'preguntas/' + COLOR_NOMBRE)).then((snapshot) => {
             if (snapshot.exists()) {
                 const preguntas = Object.values(snapshot.val());
                 const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
-                
                 document.getElementById('txtP').innerText = azar.p;
                 const cont = document.getElementById('contenido');
 
@@ -141,7 +129,6 @@
                         cont.appendChild(b);
                     });
                 } else {
-                    // TIPO DEFINICIÓN
                     const pDef = document.createElement('div');
                     pDef.innerText = azar.definicion;
                     pDef.className = "definicion-box";
@@ -150,11 +137,9 @@
                     const bOK = document.createElement('button');
                     bOK.innerText = "¡Lo tengo!"; 
                     bOK.className = CLASE_BTN;
-                    bOK.onclick = () => finalizarJuego("acierto", `📖 ¡Bien! Quesito ${COLOR_NOMBRE} conseguido.`);
+                    bOK.onclick = () => finalizarJuego("acierto", `📖 Quesito ${COLOR_NOMBRE} conseguido.`);
                     cont.appendChild(bOK);
                 }
-            } else {
-                document.getElementById('txtP').innerText = "No hay preguntas en esta categoría.";
             }
         });
     </script>
