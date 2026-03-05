@@ -55,3 +55,54 @@ button { padding: 12px; font-size: 0.95rem; font-family: 'Montserrat'; font-weig
     border-radius: 10px;
     transition: width 5s linear; /* Esto hace que tarde exactamente 5 segundos */
 }
+
+/* Contenedor del cronómetro */
+.timer-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+/* El círculo exterior que cambia de color */
+.timer-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* El fondo se actualizará por JavaScript (conic-gradient) */
+    background: conic-gradient(#27ae60 0deg, #ddd 0deg); 
+    position: relative;
+    transition: background 0.3s ease;
+}
+
+/* El círculo interior blanco para que parezca un anillo */
+.timer-circle::before {
+    content: "";
+    position: absolute;
+    width: 65px;
+    height: 65px;
+    background: white;
+    border-radius: 50%;
+}
+
+/* El texto del número (encima de todo) */
+.timer-text {
+    position: relative;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+/* Caja de definición mejorada */
+.definicion-box {
+    background: #fdfefe;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #eee;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
