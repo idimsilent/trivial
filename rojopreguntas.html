@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilos.css?v=1.7">
+    <link rel="stylesheet" href="estilos.css?v=1.8">
 </head>
 <body>
     <div class="container">
@@ -13,14 +13,12 @@
 
         <h2 id="txtP">Conectando...</h2>
         <div id="contenido" class="opciones-container"></div>
-        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px; font-size:1.1rem;"></div>
+        <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:40px; font-size:1.3rem; text-transform: uppercase;"></div>
         
         <div id="pContainer" class="progress-container">
-            <p style="font-size: 0.8rem; margin-bottom: 5px;">Volviendo al menú en 5s...</p>
+            <p id="txtVolviendo" style="font-size: 0.9rem; margin-bottom: 5px;">Volviendo al menú...</p>
             <div id="pBar" class="progress-bar"></div>
         </div>
-
-        <button id="btnVolverManual" class="btn-volver" onclick="location.href='menu.html'">Volver al Menú</button>
     </div>
 
     <script type="module">
@@ -40,9 +38,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- CONFIGURACIÓN DEL COLOR ---
-        const colorCale = 'rojo'; 
-        const claseBtn = 'btn-rojo';
+        // --- CONFIGURACIÓN DE ESTA PÁGINA ---
+        const COLOR_NOMBRE = 'rojo'; // Cambiar a 'verde', 'amarillo', etc.
+        const CLASE_BTN = 'btn-rojo';
+
+        // --- SONIDOS ---
+        const sonidoAcierto = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'); 
+        const sonidoFallo = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c35278d327.mp3');
 
         let tiempoRestante = 60;
         let juegoTerminado = false;
@@ -53,40 +55,44 @@
                 tiempoRestante--;
                 document.getElementById('timer').innerText = tiempoRestante;
                 if (tiempoRestante <= 10) document.getElementById('timer').style.color = "red";
-                
                 if (tiempoRestante <= 0) {
-                    finalizarJuego("⏰ ¡TIEMPO AGOTADO! Has perdido.", "red");
+                    finalizarJuego("fallo", `⏰ ¡Tiempo agotado! Has perdido el quesito ${COLOR_NOMBRE}`);
                 }
             }, 1000);
         }
 
-        function finalizarJuego(mensaje, color) {
+        function finalizarJuego(resultado, mensaje) {
             if (juegoTerminado) return;
             juegoTerminado = true;
             clearInterval(intervaloCrono);
 
-            // Mostrar mensaje
             const f = document.getElementById('feedback');
             f.innerText = mensaje;
-            f.style.color = color;
+            
+            if (resultado === "acierto") {
+                f.style.color = "#27ae60";
+                sonidoAcierto.play();
+            } else {
+                f.style.color = "#e74c3c";
+                sonidoFallo.play();
+            }
 
-            // Bloquear botones
-            const botones = document.querySelectorAll('.opciones-container button');
-            botones.forEach(b => b.disabled = true);
+            // Bloquear clics en botones
+            document.getElementById('contenido').style.pointerEvents = "none";
 
-            // Activar barra de progreso de 5 segundos
-            document.getElementById('pContainer').style.display = "block";
-            setTimeout(() => {
-                document.getElementById('pBar').style.width = "0%";
-            }, 100);
+            // Barra de progreso 5s
+            const pContainer = document.getElementById('pContainer');
+            const pBar = document.getElementById('pBar');
+            pContainer.style.display = "block";
+            
+            // Animación de la barra
+            pBar.style.width = "100%";
+            setTimeout(() => { pBar.style.width = "0%"; }, 100);
 
-            // Volver al menú tras 5s
-            setTimeout(() => {
-                location.href = 'menu.html';
-            }, 5000);
+            setTimeout(() => { location.href = 'menu.html'; }, 5000);
         }
 
-        get(ref(db, 'preguntas/' + colorCale)).then((snapshot) => {
+        get(ref(db, 'preguntas/' + COLOR_NOMBRE)).then((snapshot) => {
             if (snapshot.exists()) {
                 const preguntas = Object.values(snapshot.val());
                 const azar = preguntas[Math.floor(Math.random() * preguntas.length)];
@@ -98,30 +104,28 @@
                 if(azar.tipo === 'test') {
                     azar.r.forEach(res => {
                         const b = document.createElement('button');
-                        b.innerText = res; b.className = claseBtn;
+                        b.innerText = res; b.className = CLASE_BTN;
                         b.onclick = () => {
                             if(res === azar.correcta) {
-                                finalizarJuego("✅ ¡CORRECTO!", "green");
+                                finalizarJuego("acierto", `✨ ¡Enhorabuena! Has conseguido el quesito ${COLOR_NOMBRE}`);
                             } else {
-                                finalizarJuego("❌ FALLASTE. La correcta era: " + azar.correcta, "red");
+                                finalizarJuego("fallo", `❌ ¡Fallo! Has perdido el quesito ${COLOR_NOMBRE}. Era: ${azar.correcta}`);
                             }
                         };
                         cont.appendChild(b);
                     });
                 } else {
-                    // TIPO DEFINICIÓN (Aquí el tiempo también corre, pero se lee la definición)
+                    // TIPO DEFINICIÓN
                     const pDef = document.createElement('p');
                     pDef.innerText = azar.definicion;
-                    pDef.style.background = "#f0f0f0"; pDef.style.padding = "15px"; pDef.style.borderRadius = "10px";
+                    pDef.className = "definicion-box"; // Añade estilo en CSS
                     cont.appendChild(pDef);
-                    // Para definición, podrías querer un botón de "Entendido" para volver
+                    
                     const bOK = document.createElement('button');
-                    bOK.innerText = "Hecho"; bOK.className = claseBtn;
-                    bOK.onclick = () => finalizarJuego("¡Definición leída!", "#333");
+                    bOK.innerText = "¡Entendido!"; bOK.className = CLASE_BTN;
+                    bOK.onclick = () => finalizarJuego("acierto", `📖 Definición leída. ¡Quesito ${COLOR_NOMBRE} para ti!`);
                     cont.appendChild(bOK);
                 }
-            } else {
-                document.getElementById('txtP').innerText = "Sin preguntas aún.";
             }
         });
     </script>
